@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Notas de Banco de Dados</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@300;400;700&display=swap">
+<style>
+/* Layout: três folhas de caderno escritas à caneta sobre a mesa; seções em 2 colunas que viram 1 no celular */
+:root {
+  --desk: #e6ebf2;
+  --paper: #fdfdfa;
+  --ink: #2142a6;          /* caneta azul */
+  --ink-strong: #13205a;   /* azul-marinho dos títulos e caixas */
+  --ink-soft: #6b7bb0;
+  --red: #c0352c;
+  --green: #1b7a49;
+  --marker: rgba(255, 221, 64, .55);
+  --paper-shadow: rgba(19, 32, 90, .14);
+  --font-hand: "Kalam", "Segoe Print", "Comic Sans MS", cursive;
+  --font-title: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+    --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+  --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 17px;
+  line-height: 1.45;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.sheets { display: grid; gap: 36px; }
+.sheet {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px var(--paper-shadow), 0 12px 32px var(--paper-shadow);
+  padding: clamp(18px, 4vw, 44px);
+  display: grid;
+  gap: 26px;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* cabeçalho */
+.head { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; }
+.head h1 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(38px, 6vw, 58px);
+  line-height: 1.05;
+  color: var(--ink-strong);
+  text-wrap: balance;
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 10px;
+}
+.page-tag {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink-strong);
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  padding: 2px 14px;
+  white-space: nowrap;
+}
+.lede { margin: -10px 0 0; color: var(--ink-soft); font-size: 16px; }
+
+/* grade de seções */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 40px; }
+.full { grid-column: 1 / -1; }
+section { min-width: 0; }
+section h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--ink-strong);
+  border-bottom: 2px solid var(--ink-strong);
+  border-radius: 0 0 60% 8% / 0 0 5px 3px;
+  padding-bottom: 2px;
+  text-wrap: balance;
+}
+section h2 .n { margin-right: 8px; }
+section > p { margin: 0 0 8px; }
+.inner2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 36px; }
+.inner2 > * { min-width: 0; }
+.stack { display: grid; gap: 10px; align-content: start; }
+
+ul.dots, ul.checks, ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+ul.dots li { position: relative; padding-left: 22px; }
+ul.dots li::before {
+  content: ""; position: absolute; left: 4px; top: .62em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--ink-strong);
+}
+ul.checks li { position: relative; padding-left: 28px; }
+ul.checks li::before {
+  content: "\2713"; position: absolute; left: 2px; top: -2px;
+  font-weight: 700; font-size: 22px; color: var(--green);
+}
+ol.steps { counter-reset: s; }
+ol.steps li { counter-increment: s; position: relative; padding-left: 38px; }
+ol.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 1px;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border: 2px solid var(--ink-strong); border-radius: 50% 46% 52% 48%;
+  font-weight: 700; font-size: 15px; color: var(--ink-strong); line-height: 1;
+}
+
+b, strong { color: var(--ink-strong); font-weight: 700; }
+.cmd {
+  font-weight: 700;
+  color: var(--ink-strong);
+  background: linear-gradient(transparent 38%, var(--marker) 38%, var(--marker) 88%, transparent 88%);
+  padding: 0 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.red { color: var(--red); }
+.green { color: var(--green); }
+.note { color: var(--ink-soft); font-size: 15px; margin: 8px 0 0; }
+.sub { margin: 8px 0 4px; font-weight: 700; color: var(--ink-strong); }
+
+/* código escrito à mão */
+pre.sql {
+  margin: 6px 0 10px;
+  border: 2px dashed var(--ink-strong);
+  border-radius: 14px 4px 16px 5px;
+  padding: 8px 12px;
+  font-family: var(--font-hand);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+}
+pre.sql .k { color: var(--ink-strong); font-weight: 700; }
+pre.sql .s { color: var(--green); }
+pre.sql .c { color: var(--ink-soft); }
+
+/* caixa de alerta */
+.alert {
+  border: 2px dashed var(--red);
+  border-radius: 14px 4px 16px 5px;
+  padding: 8px 12px;
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+.alert h3 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: 25px; line-height: 1.1; color: var(--red); }
+.alert p { margin: 0; }
+
+/* tabelas desenhadas */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--ink-strong);
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+th, td { border: 1.5px solid var(--ink-strong); padding: 6px 9px; text-align: left; vertical-align: top; }
+th { font-family: var(--font-title); font-size: 21px; color: var(--ink-strong); font-weight: 700; }
+td:first-child { color: var(--ink-strong); font-weight: 700; }
+td code, .mono { font-family: var(--font-hand); font-weight: 700; color: var(--ink-strong); }
+
+/* ordem de execução */
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; margin: 4px 0 10px; }
+.flow .lbl { width: 100%; font-weight: 700; color: var(--ink-strong); font-size: 15px; }
+.pill {
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  padding: 0 9px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.pill.hi { background: var(--marker); }
+.pill small { font-weight: 400; color: var(--ink-soft); margin-right: 3px; }
+.flow .to { color: var(--ink-soft); }
+
+/* JOINs */
+.venns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 18px; margin-bottom: 12px; }
+.venn { display: grid; gap: 2px; justify-items: center; text-align: center; }
+.venn svg { width: 100%; max-width: 150px; height: auto; }
+.venn b { font-size: 16px; }
+.venn span { font-size: 14px; color: var(--ink-soft); line-height: 1.25; }
+
+/* diagramas */
+.diagram { overflow-x: auto; }
+.diagram svg { display: block; width: 100%; height: auto; }
+svg .ln { fill: none; stroke: var(--ink-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+svg .thin { fill: none; stroke: var(--ink-strong); stroke-width: 1.3; }
+svg .ar { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+svg .mk { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+svg .fillpaper { fill: var(--paper); }
+svg .hl { fill: var(--marker); }
+svg .hatch-line { stroke: var(--ink); stroke-width: 1.7; opacity: .75; }
+svg text { font-family: var(--font-hand); fill: var(--ink); font-size: 15px; }
+svg .t-strong { fill: var(--ink-strong); font-weight: 700; font-size: 16px; }
+svg .t-title { font-family: var(--font-title); fill: var(--ink-strong); font-weight: 700; font-size: 24px; }
+svg .t-soft { fill: var(--ink-soft); font-size: 13.5px; }
+svg .t-red { fill: var(--red); font-weight: 700; }
+svg .t-cell { font-size: 14px; }
+
+.foot {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px;
+  border-top: 1.5px solid var(--ink-strong);
+  padding-top: 10px;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.foot .sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
+
+@media (max-width: 720px) {
+  .grid, .inner2 { grid-template-columns: 1fr; }
+  .head { grid-template-columns: 1fr; }
+  .page-tag { justify-self: start; }
+  .venns { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+
+<!-- definições compartilhadas dos desenhos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="mk" d="M1.5 1.5 L8.5 5 L1.5 8.5"/>
+    </marker>
+    <filter id="wob" filterUnits="userSpaceOnUse" x="-50" y="-50" width="2000" height="2000">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line class="hatch-line" x1="0" y1="0" x2="0" y2="6"/>
+    </pattern>
+    <clipPath id="clipA"><circle cx="48" cy="42" r="32"/></clipPath>
+  </defs>
+</svg>
+
+<main class="sheets">
+
+<!-- ===================== PÁGINA 1 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>1. Fundamentos de Banco de Dados</h1>
+    <div class="page-tag">Pág. 1/3</div>
+  </header>
+  <p class="lede">Exemplos em MySQL 8. A maior parte do SQL funciona igual no PostgreSQL, SQL Server e SQLite.</p>
+
+  <div class="grid">
+
+    <!-- 1.1 -->
+    <section>
+      <h2><span class="n">1.1</span>O que é um banco de dados?</h2>
+      <ul class="dots">
+        <li><b>Banco de dados</b> = conjunto organizado de dados, guardado de forma permanente e fácil de consultar.</li>
+        <li><b>SGBD</b> (Sistema Gerenciador de Banco de Dados) = o programa que cuida dele: MySQL, PostgreSQL, SQL Server, Oracle, SQLite.</li>
+        <li><b>SQL</b> (Structured Query Language) = a linguagem para criar, consultar e alterar os dados. Criada na IBM nos anos 70.</li>
+        <li>Num banco <b>relacional</b>, os dados ficam em <b>tabelas</b> que se ligam por <b>chaves</b>.</li>
+        <li>O SQL não diferencia maiúsculas de minúsculas, mas o costume é escrever os comandos em MAIÚSCULAS e os nomes em minúsculas.</li>
+      </ul>
+    </section>
+
+    <!-- 1.2 -->
+    <section>
+      <h2><span class="n">1.2</span>Relacional (SQL) vs NoSQL</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Relacional</th><th>NoSQL</th></tr></thead>
+          <tbody>
+            <tr><td>Formato</td><td>Tabelas com colunas fixas</td><td>Documentos, chave-valor, grafos, colunas</td></tr>
+            <tr><td>Esquema</td><td>Definido antes (rígido)</td><td>Flexível, muda por registro</td></tr>
+            <tr><td>Relações</td><td>JOINs entre tabelas</td><td>Dados aninhados ou duplicados</td></tr>
+            <tr><td>Garantias</td><td>Transações ACID fortes</td><td>Varia: o MongoDB já tem transações, outros priorizam escala</td></tr>
+            <tr><td>Exemplos</td><td>MySQL, PostgreSQL, SQL Server, SQLite</td><td>MongoDB, Redis, Cassandra, Neo4j</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Sistemas de pedidos, financeiro e cadastros costumam ir de relacional. Cache, logs e dados muito variáveis costumam ir de NoSQL.</p>
+    </section>
+
+    <!-- 1.3 -->
+    <section>
+      <h2><span class="n">1.3</span>Anatomia de uma tabela</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 520 205" role="img" aria-label="Tabela clientes com colunas id, nome, cidade e email e três linhas. Setas indicam que coluna é um campo, linha é um registro, id é a chave primária e NULL é um valor vazio.">
+          <rect class="hl" x="20" y="44" width="40" height="104"/>
+          <g filter="url(#wob)">
+            <rect class="ln" x="20" y="44" width="350" height="104"/>
+            <path class="thin" d="M20 70 H370 M20 96 H370 M20 122 H370 M60 44 V148 M150 44 V148 M240 44 V148"/>
+            <path class="ar" d="M195 21 V40" marker-end="url(#arr)"/>
+            <path class="ar" d="M440 83 H376" marker-end="url(#arr)"/>
+            <path class="ar" d="M40 170 V152" marker-end="url(#arr)"/>
+            <path class="ar" d="M318 168 L306 152" marker-end="url(#arr)"/>
+          </g>
+          <text class="t-title" x="20" y="34">clientes</text>
+          <text class="t-strong" x="195" y="15" text-anchor="middle">coluna = campo</text>
+          <text class="t-strong" x="28" y="62">id</text>
+          <text class="t-strong" x="68" y="62">nome</text>
+          <text class="t-strong" x="158" y="62">cidade</text>
+          <text class="t-strong" x="248" y="62">email</text>
+          <text class="t-cell" x="34" y="88">1</text><text class="t-cell" x="68" y="88">Ana</text><text class="t-cell" x="158" y="88">Recife</text><text class="t-cell" x="248" y="88">ana@mail.com</text>
+          <text class="t-cell" x="34" y="114">2</text><text class="t-cell" x="68" y="114">Bruno</text><text class="t-cell" x="158" y="114">Natal</text><text class="t-cell" x="248" y="114">bruno@mail.com</text>
+          <text class="t-cell" x="34" y="140">3</text><text class="t-cell" x="68" y="140">Carla</text><text class="t-cell" x="158" y="140">Recife</text><text class="t-cell t-red" x="248" y="140">NULL</text>
+          <text class="t-strong" x="446" y="80">registro</text>
+          <text class="t-soft" x="446" y="98">(linha)</text>
+          <text x="20" y="190"><tspan class="t-strong">PK:</tspan> única por linha</text>
+          <text x="250" y="190"><tspan class="t-red">NULL</tspan> = vazio (≠ 0 e ≠ '')</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 1.4 -->
+    <section>
+      <h2><span class="n">1.4</span>Categorias de comandos SQL</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Sigla</th><th>Para quê</th><th>Comandos</th></tr></thead>
+          <tbody>
+            <tr><td>DDL</td><td>Define a estrutura (Data Definition)</td><td>CREATE, ALTER, DROP, TRUNCATE, RENAME</td></tr>
+            <tr><td>DML</td><td>Mexe nos dados (Data Manipulation)</td><td>INSERT, UPDATE, DELETE</td></tr>
+            <tr><td>DQL</td><td>Consulta os dados (Data Query)</td><td>SELECT</td></tr>
+            <tr><td>DCL</td><td>Controla acessos (Data Control)</td><td>GRANT, REVOKE</td></tr>
+            <tr><td>TCL</td><td>Controla transações (Transaction Control)</td><td>START TRANSACTION, COMMIT, ROLLBACK, SAVEPOINT</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Alguns materiais colocam o SELECT dentro da DML. As duas divisões são usadas.</p>
+    </section>
+
+    <!-- 1.5 -->
+    <section>
+      <h2><span class="n">1.5</span>Tipos de dados (MySQL)</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo</th><th>Guarda</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td>INT / BIGINT</td><td>Números inteiros</td><td>42</td></tr>
+            <tr><td>DECIMAL(10,2)</td><td>Número exato com casas decimais</td><td>1999.90</td></tr>
+            <tr><td>FLOAT / DOUBLE</td><td>Número aproximado</td><td>3.14159</td></tr>
+            <tr><td>VARCHAR(n)</td><td>Texto de até n caracteres (não bytes)</td><td>'Ana'</td></tr>
+            <tr><td>CHAR(n)</td><td>Texto de tamanho fixo</td><td>'PE'</td></tr>
+            <tr><td>TEXT</td><td>Texto longo</td><td>descrição, post</td></tr>
+            <tr><td>DATE</td><td>Data (AAAA-MM-DD)</td><td>'2026-11-14'</td></tr>
+            <tr><td>DATETIME</td><td>Data e hora, sem fuso</td><td>'2026-11-14 09:30:00'</td></tr>
+            <tr><td>TIMESTAMP</td><td>Data e hora guardada em UTC e convertida pelo fuso da conexão. Só vai até 2038.</td><td>criado_em</td></tr>
+            <tr><td>BOOLEAN</td><td>Verdadeiro/falso (vira TINYINT(1))</td><td>TRUE, 1</td></tr>
+            <tr><td>ENUM(...)</td><td>Um valor de uma lista</td><td>'pendente'</td></tr>
+            <tr><td>JSON</td><td>Documento JSON validado</td><td>'{"cor": "azul"}'</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><span class="red"><b>Dinheiro é DECIMAL, nunca FLOAT.</b></span> FLOAT e DOUBLE guardam aproximações: numa coluna FLOAT, 0.1 vira 0.100000001, e os centavos erram nas somas.</p>
+    </section>
+
+    <!-- 1.6 -->
+    <section>
+      <h2><span class="n">1.6</span>Chaves e restrições</h2>
+      <ul class="dots">
+        <li><b>PRIMARY KEY (PK):</b> identifica cada linha. Única e nunca NULL. Uma por tabela, mas pode juntar várias colunas (chave composta).</li>
+        <li><b>FOREIGN KEY (FK):</b> coluna que aponta para a PK de outra tabela. Impede pedido de cliente que não existe.</li>
+        <li><b>AUTO_INCREMENT:</b> o banco gera o próximo número sozinho (1, 2, 3...).</li>
+        <li><b>NOT NULL:</b> o campo é obrigatório.</li>
+        <li><b>UNIQUE:</b> não deixa repetir valor (ex.: e-mail).</li>
+        <li><b>DEFAULT:</b> valor usado quando nada é informado.</li>
+        <li><b>CHECK:</b> regra de validação, como <span class="cmd">CHECK (valor &gt; 0)</span>. Só é aplicado a partir do MySQL 8.0.16.</li>
+      </ul>
+      <p class="sub">O que acontece com os filhos quando o pai some?</p>
+      <ul class="dots">
+        <li><span class="cmd">ON DELETE CASCADE</span> apaga os pedidos junto com o cliente.</li>
+        <li><span class="cmd">ON DELETE SET NULL</span> deixa o pedido sem cliente.</li>
+        <li><span class="cmd">ON DELETE RESTRICT</span> bloqueia a exclusão. Sem nada escrito, o padrão (NO ACTION) faz o mesmo.</li>
+        <li><span class="cmd">ON UPDATE CASCADE</span> atualiza os filhos quando a chave do pai muda.</li>
+      </ul>
+    </section>
+
+    <!-- 1.7 -->
+    <section>
+      <h2><span class="n">1.7</span>Relacionamentos</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 420 178" role="img" aria-label="Relação 1 para N: um cliente tem vários pedidos. Relação N para N: alunos e cursos ligados pela tabela matrículas.">
+          <g filter="url(#wob)">
+            <rect class="ln fillpaper" x="10" y="20" width="110" height="36" rx="5"/>
+            <rect class="ln fillpaper" x="270" y="20" width="110" height="36" rx="5"/>
+            <path class="ln" d="M120 38 H270 M132 29 V47 M256 38 L270 29 M256 38 L270 47"/>
+            <rect class="ln fillpaper" x="10" y="110" width="90" height="36" rx="5"/>
+            <rect class="ln fillpaper" x="150" y="110" width="120" height="36" rx="5"/>
+            <rect class="ln fillpaper" x="320" y="110" width="90" height="36" rx="5"/>
+            <path class="ln" d="M100 128 H150 M110 119 V137 M136 128 L150 119 M136 128 L150 137"/>
+            <path class="ln" d="M270 128 H320 M310 119 V137 M284 128 L270 119 M284 128 L270 137"/>
+          </g>
+          <text class="t-strong" x="65" y="44" text-anchor="middle">clientes</text>
+          <text class="t-strong" x="325" y="44" text-anchor="middle">pedidos</text>
+          <text class="t-title" x="195" y="30" text-anchor="middle">1 : N</text>
+          <text class="t-soft" x="195" y="76" text-anchor="middle">1 cliente tem N pedidos (FK em pedidos)</text>
+          <text class="t-title" x="210" y="100" text-anchor="middle">N : N</text>
+          <text class="t-strong" x="55" y="134" text-anchor="middle">alunos</text>
+          <text class="t-strong" x="210" y="134" text-anchor="middle">matrículas</text>
+          <text class="t-strong" x="365" y="134" text-anchor="middle">cursos</text>
+          <text class="t-soft" x="210" y="168" text-anchor="middle">N:N vira duas 1:N com uma tabela no meio</text>
+        </svg>
+      </div>
+      <ul class="dots">
+        <li><b>1:1</b> uma pessoa tem um CPF. Use FK + UNIQUE.</li>
+        <li><b>1:N</b> a FK fica do lado do "N" (pedidos.cliente_id).</li>
+        <li><b>N:N</b> precisa de uma <b>tabela associativa</b> com as duas FKs.</li>
+      </ul>
+    </section>
+
+    <!-- 1.8 -->
+    <section>
+      <h2><span class="n">1.8</span>Normalização</h2>
+      <p>Organizar as tabelas para não repetir dados e evitar inconsistência.</p>
+      <ul class="dots">
+        <li><b>1FN:</b> cada célula guarda <b>um valor só</b>. Nada de "café, leite, pão" numa coluna: vira uma linha por produto.</li>
+        <li><b>2FN:</b> 1FN + toda coluna depende da <b>chave inteira</b>. Em chave composta (pedido_id, produto_id), o nome do produto vai para a tabela de produtos.</li>
+        <li><b>3FN:</b> 2FN + nenhuma coluna depende de outra coluna comum. Se o CEP define a cidade, a cidade sai da tabela de clientes.</li>
+      </ul>
+      <p class="note">Para lembrar: cada coluna depende "da chave, da chave inteira e de nada além da chave". Em relatórios pesados, às vezes se <b>desnormaliza</b> de propósito para ganhar velocidade.</p>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Banco de Dados &amp; SQL</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== PÁGINA 2 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>2. SQL na Prática</h1>
+    <div class="page-tag">Pág. 2/3</div>
+  </header>
+  <p class="lede">Todos os exemplos usam o mesmo banco: <b>loja</b>, com as tabelas <b>clientes</b> e <b>pedidos</b>.</p>
+
+  <div class="grid">
+
+    <!-- 2.1 -->
+    <section class="full">
+      <h2><span class="n">2.1</span>Criando a estrutura (DDL)</h2>
+      <div class="inner2">
+        <div>
+<pre class="sql">CREATE DATABASE IF NOT EXISTS loja
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE loja;
+
+CREATE TABLE clientes (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  nome      VARCHAR(100) NOT NULL,
+  email     VARCHAR(150) UNIQUE,
+  cidade    VARCHAR(60),
+  criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE pedidos (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  cliente_id INT NOT NULL,
+  valor      DECIMAL(10,2) NOT NULL CHECK (valor &gt; 0),
+  feito_em   DATE NOT NULL,
+  CONSTRAINT fk_pedidos_cliente
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+    ON DELETE RESTRICT
+);</pre>
+          <p class="note" style="margin:0">Use <b>utf8mb4</b>: ele aceita acentos e emojis. O antigo "utf8" do MySQL não aceita todos.</p>
+        </div>
+        <div class="stack">
+          <p class="sub" style="margin:0">Alterar uma tabela que já existe</p>
+<pre class="sql">ALTER TABLE clientes ADD telefone VARCHAR(20);
+ALTER TABLE clientes MODIFY cidade VARCHAR(100);
+ALTER TABLE clientes RENAME COLUMN telefone TO celular;
+ALTER TABLE clientes DROP COLUMN celular;
+RENAME TABLE clientes TO compradores;</pre>
+          <p class="note" style="margin:0"><span class="red"><b>MODIFY reescreve a coluna inteira:</b></span> se você esquecer o NOT NULL ou o DEFAULT, eles somem. O RENAME COLUMN é do MySQL 8. Em versões antigas, use CHANGE.</p>
+          <p class="sub" style="margin:0">DELETE vs TRUNCATE vs DROP</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Comando</th><th>O que apaga</th><th>Detalhe</th></tr></thead>
+              <tbody>
+                <tr><td>DELETE FROM t WHERE ...</td><td>Linhas escolhidas</td><td>DML. Dá para desfazer em transação e dispara triggers.</td></tr>
+                <tr><td>TRUNCATE TABLE t</td><td>Todas as linhas</td><td>DDL. Rápido, zera o AUTO_INCREMENT, sem rollback. Falha se outra tabela tiver FK apontando para ela.</td></tr>
+                <tr><td>DROP TABLE t</td><td>A tabela inteira</td><td>Some a estrutura e os dados.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.2 -->
+    <section>
+      <h2><span class="n">2.2</span>CRUD: criar, ler, atualizar, apagar</h2>
+<pre class="sql">-- C: inserir (várias linhas de uma vez)
+INSERT INTO clientes (nome, email, cidade)
+VALUES ('Ana', 'ana@mail.com', 'Recife'),
+       ('Bruno', 'bruno@mail.com', 'Natal');
+
+-- R: consultar
+SELECT nome, cidade FROM clientes
+WHERE cidade = 'Recife';
+
+-- U: atualizar
+UPDATE clientes SET cidade = 'Olinda'
+WHERE id = 1;
+
+-- D: apagar
+DELETE FROM clientes WHERE id = 2;
+
+-- id gerado pelo último INSERT
+SELECT LAST_INSERT_ID();
+
+-- upsert: insere ou atualiza se o e-mail já existir
+-- (sintaxe do MySQL 8.0.19+)
+INSERT INTO clientes (nome, email)
+VALUES ('Ana Lima', 'ana@mail.com') AS novo
+ON DUPLICATE KEY UPDATE nome = novo.nome;</pre>
+      <div class="alert">
+        <h3>UPDATE e DELETE sem WHERE</h3>
+        <p><span class="cmd">UPDATE clientes SET cidade = 'Olinda';</span> muda <b>todas</b> as linhas da tabela.</p>
+        <p class="note" style="margin:0">Antes, rode um SELECT com o mesmo WHERE para ver o que vai mudar. No Workbench, o modo <span class="cmd">SET SQL_SAFE_UPDATES = 1;</span> bloqueia esse erro.</p>
+      </div>
+    </section>
+
+    <!-- 2.3 -->
+    <section>
+      <h2><span class="n">2.3</span>A ordem de uma consulta</h2>
+      <div class="flow" aria-label="Ordem em que você escreve">
+        <span class="lbl">Você escreve nesta ordem:</span>
+        <span class="pill hi">SELECT</span><span class="to">→</span>
+        <span class="pill">FROM</span><span class="to">→</span>
+        <span class="pill">WHERE</span><span class="to">→</span>
+        <span class="pill">GROUP BY</span><span class="to">→</span>
+        <span class="pill">HAVING</span><span class="to">→</span>
+        <span class="pill">ORDER BY</span><span class="to">→</span>
+        <span class="pill">LIMIT</span>
+      </div>
+      <div class="flow" aria-label="Ordem em que o banco executa">
+        <span class="lbl">O banco executa nesta:</span>
+        <span class="pill"><small>1</small>FROM + JOIN</span><span class="to">→</span>
+        <span class="pill"><small>2</small>WHERE</span><span class="to">→</span>
+        <span class="pill"><small>3</small>GROUP BY</span><span class="to">→</span>
+        <span class="pill"><small>4</small>HAVING</span><span class="to">→</span>
+        <span class="pill hi"><small>5</small>SELECT</span><span class="to">→</span>
+        <span class="pill"><small>6</small>ORDER BY</span><span class="to">→</span>
+        <span class="pill"><small>7</small>LIMIT</span>
+      </div>
+      <ul class="dots">
+        <li>Por isso um apelido criado no SELECT <b>não funciona no WHERE</b> (o WHERE roda antes), mas funciona no ORDER BY. No MySQL, também funciona no GROUP BY e no HAVING.</li>
+        <li>O DISTINCT é aplicado logo depois do SELECT, antes do ORDER BY.</li>
+        <li>O WHERE filtra <b>linhas</b>. O HAVING filtra <b>grupos</b>, depois do GROUP BY.</li>
+      </ul>
+    </section>
+
+    <!-- 2.4 -->
+    <section>
+      <h2><span class="n">2.4</span>Filtros com WHERE</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Operador</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td>= &lt;&gt; != &gt; &lt; &gt;= &lt;=</td><td>valor &gt;= 100</td></tr>
+            <tr><td>BETWEEN</td><td>valor BETWEEN 100 AND 500 (inclui as pontas)</td></tr>
+            <tr><td>IN</td><td>cidade IN ('Recife', 'Natal')</td></tr>
+            <tr><td>LIKE</td><td>nome LIKE 'An%' → começa com "An"</td></tr>
+            <tr><td>IS NULL</td><td>email IS NULL / IS NOT NULL</td></tr>
+            <tr><td>AND, OR, NOT</td><td>cidade = 'Recife' AND valor &gt; 100</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="dots" style="margin-top:10px">
+        <li>No LIKE, <b>%</b> é "qualquer coisa" e <b>_</b> é "exatamente 1 caractere": <span class="cmd">'%silva'</span>, <span class="cmd">'_na'</span>.</li>
+        <li>Maiúscula ou minúscula faz diferença? Depende da <b>collation</b>. Nas terminadas em <b>_ci</b> (case-insensitive, o padrão), 'ana' encontra 'Ana'.</li>
+        <li><span class="red"><b>email = NULL nunca dá verdadeiro.</b></span> Use IS NULL.</li>
+        <li>Misturou AND com OR? Use parênteses: <span class="cmd">WHERE (a OR b) AND c</span>.</li>
+      </ul>
+    </section>
+
+    <!-- 2.5 -->
+    <section>
+      <h2><span class="n">2.5</span>Ordenar, limitar e apelidar</h2>
+<pre class="sql">-- sem repetição
+SELECT DISTINCT cidade FROM clientes;
+
+-- apelido (AS) e ordem alfabética
+SELECT nome AS cliente FROM clientes
+ORDER BY nome ASC;
+
+-- os 5 maiores pedidos
+SELECT * FROM pedidos
+ORDER BY valor DESC LIMIT 5;
+
+-- paginação: página 3, com 10 por página
+SELECT * FROM pedidos
+ORDER BY id LIMIT 10 OFFSET 20;</pre>
+      <p class="note">ASC = crescente (padrão), DESC = decrescente. Dá para ordenar por várias colunas: <span class="cmd">ORDER BY cidade, nome</span>.</p>
+      <p class="note">OFFSET alto fica lento, porque o banco lê e descarta as linhas puladas. Em tabelas grandes, pagine pela chave: <span class="cmd">WHERE id &gt; ultimo_id ORDER BY id LIMIT 10</span>.</p>
+    </section>
+
+    <!-- 2.6 -->
+    <section>
+      <h2><span class="n">2.6</span>Agregação e GROUP BY</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Função</th><th>Retorna</th></tr></thead>
+          <tbody>
+            <tr><td>COUNT(*)</td><td>Quantidade de linhas</td></tr>
+            <tr><td>COUNT(coluna)</td><td>Quantidade de valores não NULL</td></tr>
+            <tr><td>SUM(valor)</td><td>Soma</td></tr>
+            <tr><td>AVG(valor)</td><td>Média</td></tr>
+            <tr><td>MIN / MAX</td><td>Menor e maior valor</td></tr>
+            <tr><td>COUNT(DISTINCT col)</td><td>Quantidade de valores diferentes</td></tr>
+            <tr><td>GROUP_CONCAT(nome)</td><td>Junta os textos do grupo: 'Ana,Bruno'</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre class="sql">-- cidades com mais de 10 clientes em 2026
+SELECT cidade, COUNT(*) AS total
+FROM clientes
+WHERE criado_em &gt;= '2026-01-01'
+GROUP BY cidade
+HAVING COUNT(*) &gt; 10
+ORDER BY total DESC;</pre>
+      <p class="note">Regra: toda coluna do SELECT que não está numa função de agregação precisa estar no GROUP BY. O MySQL cobra isso com o modo ONLY_FULL_GROUP_BY, ligado por padrão. SUM, AVG, MIN e MAX ignoram os NULL.</p>
+    </section>
+
+    <!-- 2.7 -->
+    <section>
+      <h2><span class="n">2.7</span>Subconsultas e UNION</h2>
+<pre class="sql">-- clientes que já compraram
+SELECT nome FROM clientes
+WHERE id IN (SELECT cliente_id FROM pedidos);
+
+-- pedidos acima da média
+SELECT * FROM pedidos
+WHERE valor &gt; (SELECT AVG(valor) FROM pedidos);
+
+-- clientes sem nenhum pedido (correlacionada)
+SELECT c.nome FROM clientes c
+WHERE NOT EXISTS (
+  SELECT 1 FROM pedidos p WHERE p.cliente_id = c.id
+);
+
+-- juntar resultados de duas consultas
+SELECT email FROM clientes
+UNION
+SELECT email FROM fornecedores;</pre>
+      <ul class="dots">
+        <li><b>UNION</b> remove duplicatas. <b>UNION ALL</b> mantém tudo e é mais rápido.</li>
+        <li>As duas consultas precisam ter o mesmo número de colunas, com tipos compatíveis.</li>
+        <li><span class="red"><b>Cuidado com NOT IN:</b></span> se a subconsulta devolver algum NULL, o NOT IN não retorna nenhuma linha. Prefira NOT EXISTS.</li>
+      </ul>
+    </section>
+
+    <!-- 2.8 -->
+    <section class="full">
+      <h2><span class="n">2.8</span>JOINs: juntando tabelas</h2>
+      <div class="venns">
+        <div class="venn">
+          <svg viewBox="0 0 132 84" aria-hidden="true">
+            <circle cx="84" cy="42" r="32" fill="url(#hatch)" clip-path="url(#clipA)"/>
+            <g filter="url(#wob)"><circle class="ln" cx="48" cy="42" r="32"/><circle class="ln" cx="84" cy="42" r="32"/></g>
+            <text class="t-strong" x="28" y="47">A</text><text class="t-strong" x="96" y="47">B</text>
+          </svg>
+          <b>INNER JOIN</b><span>só o que existe nas duas</span>
+        </div>
+        <div class="venn">
+          <svg viewBox="0 0 132 84" aria-hidden="true">
+            <circle cx="48" cy="42" r="32" fill="url(#hatch)"/>
+            <g filter="url(#wob)"><circle class="ln" cx="48" cy="42" r="32"/><circle class="ln" cx="84" cy="42" r="32"/></g>
+            <text class="t-strong" x="28" y="47">A</text><text class="t-strong" x="96" y="47">B</text>
+          </svg>
+          <b>LEFT JOIN</b><span>tudo de A + o que combinar de B</span>
+        </div>
+        <div class="venn">
+          <svg viewBox="0 0 132 84" aria-hidden="true">
+            <circle cx="84" cy="42" r="32" fill="url(#hatch)"/>
+            <g filter="url(#wob)"><circle class="ln" cx="48" cy="42" r="32"/><circle class="ln" cx="84" cy="42" r="32"/></g>
+            <text class="t-strong" x="28" y="47">A</text><text class="t-strong" x="96" y="47">B</text>
+          </svg>
+          <b>RIGHT JOIN</b><span>tudo de B + o que combinar de A</span>
+        </div>
+        <div class="venn">
+          <svg viewBox="0 0 132 84" aria-hidden="true">
+            <circle cx="48" cy="42" r="32" fill="url(#hatch)"/>
+            <circle cx="84" cy="42" r="32" fill="url(#hatch)"/>
+            <g filter="url(#wob)"><circle class="ln" cx="48" cy="42" r="32"/><circle class="ln" cx="84" cy="42" r="32"/></g>
+            <text class="t-strong" x="28" y="47">A</text><text class="t-strong" x="96" y="47">B</text>
+          </svg>
+          <b>FULL JOIN</b><span>tudo das duas (MySQL não tem: use UNION)</span>
+        </div>
+      </div>
+      <div class="inner2">
+        <div>
+<pre class="sql">-- A = clientes c, B = pedidos p
+SELECT c.nome, p.valor, p.feito_em
+FROM clientes c
+INNER JOIN pedidos p ON p.cliente_id = c.id;
+
+-- clientes sem pedido: LEFT JOIN + IS NULL
+SELECT c.nome
+FROM clientes c
+LEFT JOIN pedidos p ON p.cliente_id = c.id
+WHERE p.id IS NULL;</pre>
+        </div>
+        <div>
+<pre class="sql">-- FULL JOIN no MySQL:
+-- LEFT JOIN + só as sobras do RIGHT JOIN
+SELECT c.nome, p.valor
+FROM clientes c LEFT JOIN pedidos p ON p.cliente_id = c.id
+UNION ALL
+SELECT c.nome, p.valor
+FROM clientes c RIGHT JOIN pedidos p ON p.cliente_id = c.id
+WHERE c.id IS NULL;</pre>
+          <ul class="dots">
+            <li><b>JOIN</b> sozinho é o mesmo que INNER JOIN.</li>
+            <li><span class="red"><b>Armadilha:</b></span> num LEFT JOIN, o filtro da tabela da direita vai no <b>ON</b>. No WHERE, ele descarta as linhas sem par e o LEFT vira INNER.</li>
+            <li><b>CROSS JOIN:</b> combina cada linha de A com cada linha de B (3 × 4 = 12 linhas).</li>
+            <li><b>SELF JOIN:</b> a tabela com ela mesma, como funcionário e chefe na mesma tabela.</li>
+            <li>Onde não houver par, as colunas do outro lado aparecem como <b>NULL</b>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.9 -->
+    <section class="full">
+      <h2><span class="n">2.9</span>Funções úteis</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Tipo</th><th>Funções</th><th>Exemplo → resultado</th></tr></thead>
+          <tbody>
+            <tr><td>Texto</td><td>CONCAT, UPPER, LOWER, LENGTH, SUBSTRING, TRIM, REPLACE</td><td>CONCAT(nome, ' - ', cidade) → 'Ana - Recife'</td></tr>
+            <tr><td>Data</td><td>NOW, CURDATE, YEAR, MONTH, DATEDIFF, DATE_ADD, DATE_FORMAT</td><td>DATE_FORMAT(feito_em, '%d/%m/%Y') → '14/11/2026'</td></tr>
+            <tr><td>Número</td><td>ROUND, CEIL, FLOOR, ABS, MOD</td><td>ROUND(19.987, 2) → 19.99</td></tr>
+            <tr><td>NULL</td><td>COALESCE, IFNULL, NULLIF</td><td>COALESCE(email, 'sem e-mail')</td></tr>
+            <tr><td>Condição</td><td>CASE WHEN ... THEN ... ELSE ... END, IF</td><td>veja abaixo</td></tr>
+            <tr><td>Conversão</td><td>CAST, CONVERT</td><td>CAST('42' AS UNSIGNED) → 42</td></tr>
+            <tr><td>JSON</td><td>JSON_EXTRACT, JSON_OBJECT, operador -&gt;&gt;</td><td>dados-&gt;&gt;'$.cor' → 'azul'</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre class="sql">SELECT id, valor,
+  CASE WHEN valor &gt;= 500 THEN 'alto'
+       WHEN valor &gt;= 100 THEN 'médio'
+       ELSE 'baixo'
+  END AS faixa
+FROM pedidos;</pre>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Banco de Dados &amp; SQL</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== PÁGINA 3 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>3. SQL Avançado e Administração</h1>
+    <div class="page-tag">Pág. 3/3</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 3.1 -->
+    <section>
+      <h2><span class="n">3.1</span>Índices</h2>
+      <p>Funcionam como o índice de um livro: o banco acha a linha sem ler a tabela inteira.</p>
+<pre class="sql">CREATE INDEX idx_pedidos_cliente ON pedidos (cliente_id);
+CREATE UNIQUE INDEX idx_clientes_email ON clientes (email);
+SHOW INDEX FROM pedidos;
+DROP INDEX idx_pedidos_cliente ON pedidos;
+
+-- o banco vai usar o índice?
+EXPLAIN SELECT * FROM pedidos WHERE cliente_id = 7;</pre>
+      <ul class="dots">
+        <li>No EXPLAIN, <b>type = ALL</b> quer dizer que ele leu a tabela toda. <b>ref</b>, <b>eq_ref</b> ou <b>const</b> quer dizer que usou índice.</li>
+        <li>Indexe colunas usadas em WHERE, JOIN e ORDER BY. A PK já vem indexada.</li>
+        <li>Índice acelera a leitura, mas deixa INSERT e UPDATE um pouco mais lentos.</li>
+        <li><span class="cmd">LIKE '%ana'</span> (com % no começo) não usa o índice.</li>
+        <li><b>Índice composto</b> (cidade, nome) serve para filtrar por cidade, ou por cidade e nome. Só por nome, não: ele é lido da esquerda para a direita.</li>
+        <li>Função na coluna também anula o índice. Troque <span class="cmd">WHERE YEAR(feito_em) = 2026</span> por <span class="cmd">WHERE feito_em &gt;= '2026-01-01' AND feito_em &lt; '2027-01-01'</span>.</li>
+        <li>No InnoDB, toda FK precisa de índice. Se não existir, o MySQL cria um sozinho.</li>
+      </ul>
+    </section>
+
+    <!-- 3.2 -->
+    <section>
+      <h2><span class="n">3.2</span>Transações e ACID</h2>
+      <p>Um grupo de comandos que acontece <b>inteiro ou não acontece</b>.</p>
+<pre class="sql">START TRANSACTION;
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;
+UPDATE contas SET saldo = saldo + 100 WHERE id = 2;
+COMMIT;      -- grava tudo
+-- ROLLBACK; -- ou desfaz tudo, se algo falhou</pre>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Letra</th><th>Significa</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td><b>Atomicidade:</b> tudo ou nada.</td></tr>
+            <tr><td>C</td><td><b>Consistência:</b> as regras (FK, CHECK) continuam valendo no fim.</td></tr>
+            <tr><td>I</td><td><b>Isolamento:</b> transações ao mesmo tempo não se atrapalham.</td></tr>
+            <tr><td>D</td><td><b>Durabilidade:</b> depois do COMMIT, fica gravado mesmo se a luz cair.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul class="dots" style="margin-top:10px">
+        <li>No MySQL, transação funciona no motor <b>InnoDB</b> (o padrão).</li>
+        <li>O <b>autocommit</b> vem ligado: fora de uma transação, cada comando é gravado na hora.</li>
+        <li>Comandos DDL (CREATE, ALTER, DROP) fazem commit automático, mesmo no meio de uma transação.</li>
+        <li><span class="cmd">SAVEPOINT etapa1;</span> cria um ponto de volta. <span class="cmd">ROLLBACK TO etapa1;</span> desfaz só até ali.</li>
+        <li>O nível de isolamento padrão do InnoDB é <b>REPEATABLE READ</b>.</li>
+      </ul>
+    </section>
+
+    <!-- 3.3 -->
+    <section>
+      <h2><span class="n">3.3</span>Views</h2>
+<pre class="sql">CREATE VIEW vw_clientes_recife AS
+SELECT id, nome, email
+FROM clientes
+WHERE cidade = 'Recife';
+
+SELECT * FROM vw_clientes_recife;
+
+CREATE OR REPLACE VIEW vw_clientes_recife AS ...;
+DROP VIEW IF EXISTS vw_clientes_recife;</pre>
+      <ul class="dots">
+        <li>View é uma <b>consulta salva com nome</b>, usada como se fosse tabela.</li>
+        <li>Não guarda dados: roda a consulta toda vez. O MySQL não tem view materializada (o PostgreSQL tem).</li>
+        <li>Serve para esconder consultas complexas e colunas sensíveis de quem só precisa ler.</li>
+      </ul>
+    </section>
+
+    <!-- 3.4 -->
+    <section>
+      <h2><span class="n">3.4</span>Stored procedures</h2>
+<pre class="sql">DELIMITER $$
+CREATE PROCEDURE pedidos_do_cliente(IN p_id INT)
+BEGIN
+  SELECT * FROM pedidos
+  WHERE cliente_id = p_id
+  ORDER BY feito_em DESC;
+END $$
+DELIMITER ;
+
+CALL pedidos_do_cliente(1);
+DROP PROCEDURE IF EXISTS pedidos_do_cliente;</pre>
+      <ul class="dots">
+        <li>Procedure = bloco de SQL guardado no banco e chamado pelo nome, com parâmetros <b>IN</b>, <b>OUT</b> ou <b>INOUT</b>.</li>
+        <li>O <b>DELIMITER</b> troca o ";" por "$$" enquanto você escreve, para o bloco inteiro ser um comando só.</li>
+        <li><b>FUNCTION</b> é parecida, mas devolve um valor e pode ser usada dentro do SELECT.</li>
+      </ul>
+    </section>
+
+    <!-- 3.5 -->
+    <section>
+      <h2><span class="n">3.5</span>Triggers (gatilhos)</h2>
+<pre class="sql">-- registra toda mudança de preço
+CREATE TRIGGER trg_log_preco
+AFTER UPDATE ON produtos
+FOR EACH ROW
+INSERT INTO log_precos (produto_id, preco_antigo, preco_novo, alterado_em)
+VALUES (OLD.id, OLD.preco, NEW.preco, NOW());
+
+-- BEFORE: corrige preço negativo para 0
+CREATE TRIGGER trg_preco_minimo
+BEFORE UPDATE ON produtos
+FOR EACH ROW
+SET NEW.preco = GREATEST(NEW.preco, 0);
+
+DROP TRIGGER IF EXISTS trg_log_preco;</pre>
+      <ul class="dots">
+        <li>Roda sozinho <b>BEFORE</b> ou <b>AFTER</b> um INSERT, UPDATE ou DELETE.</li>
+        <li><b>OLD</b> = a linha antes da mudança. <b>NEW</b> = a linha depois.</li>
+        <li>No BEFORE dá para corrigir o NEW antes de gravar. Para recusar a operação, use <span class="cmd">SIGNAL SQLSTATE '45000'</span> dentro de um bloco BEGIN ... END.</li>
+        <li>Use com moderação: lógica escondida no banco é difícil de depurar.</li>
+      </ul>
+    </section>
+
+    <!-- 3.6 -->
+    <section>
+      <h2><span class="n">3.6</span>CTE e window functions</h2>
+<pre class="sql">-- ranking de clientes por total comprado
+WITH totais AS (
+  SELECT cliente_id, SUM(valor) AS total
+  FROM pedidos
+  GROUP BY cliente_id
+)
+SELECT c.nome, t.total,
+       RANK() OVER (ORDER BY t.total DESC) AS posicao
+FROM totais t
+JOIN clientes c ON c.id = t.cliente_id;</pre>
+      <ul class="dots">
+        <li><b>WITH</b> (CTE) dá nome a uma subconsulta e deixa a leitura em etapas.</li>
+        <li><b>OVER (...)</b> calcula sobre um grupo de linhas sem juntá-las numa só, como o GROUP BY faria.</li>
+        <li>Mais usadas: <span class="cmd">ROW_NUMBER()</span>, <span class="cmd">RANK()</span>, <span class="cmd">DENSE_RANK()</span>, <span class="cmd">LAG()</span>, <span class="cmd">LEAD()</span> e <span class="cmd">SUM() OVER (PARTITION BY ...)</span>.</li>
+        <li>Disponível a partir do MySQL 8.0.</li>
+      </ul>
+    </section>
+
+    <!-- 3.7 -->
+    <section class="full">
+      <h2><span class="n">3.7</span>Usuários e permissões (DCL)</h2>
+      <div class="inner2">
+        <div>
+<pre class="sql">CREATE USER 'app'@'localhost' IDENTIFIED BY 'senha_forte';
+
+GRANT SELECT, INSERT, UPDATE, DELETE
+  ON loja.* TO 'app'@'localhost';
+
+SHOW GRANTS FOR 'app'@'localhost';
+REVOKE DELETE ON loja.* FROM 'app'@'localhost';
+
+ALTER USER 'app'@'localhost' IDENTIFIED BY 'nova_senha';
+RENAME USER 'app'@'localhost' TO 'loja_app'@'localhost';
+DROP USER 'loja_app'@'localhost';
+
+-- listar usuários
+SELECT user, host FROM mysql.user;</pre>
+        </div>
+        <div class="stack">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Privilégio</th><th>Permite</th></tr></thead>
+              <tbody>
+                <tr><td>ALL PRIVILEGES</td><td>Tudo (menos dar permissão a outros)</td></tr>
+                <tr><td>SELECT</td><td>Ler dados</td></tr>
+                <tr><td>INSERT / UPDATE / DELETE</td><td>Inserir, alterar e apagar linhas</td></tr>
+                <tr><td>CREATE / ALTER / DROP</td><td>Criar, mudar e apagar tabelas e bancos</td></tr>
+                <tr><td>GRANT OPTION</td><td>Repassar suas permissões</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="dots">
+            <li><b>'localhost'</b> só conecta da própria máquina. <b>'%'</b> aceita de qualquer lugar: use com cuidado.</li>
+            <li><b>'app'@'localhost'</b> e <b>'app'@'%'</b> são dois usuários diferentes, cada um com suas permissões.</li>
+            <li>No MySQL 8 existem <b>roles</b>: <span class="cmd">CREATE ROLE leitura;</span> junta permissões numa role, que você dá a vários usuários.</li>
+            <li><b>loja.*</b> = todas as tabelas do banco loja. <b>*.*</b> = todos os bancos.</li>
+            <li>A função PASSWORD() saiu no MySQL 8. Para trocar senha, use <span class="cmd">ALTER USER</span>.</li>
+            <li><span class="cmd">FLUSH PRIVILEGES</span> só é necessário se você editar as tabelas mysql.* na mão.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3.8 -->
+    <section>
+      <h2><span class="n">3.8</span>Backup e restauração</h2>
+<pre class="sql"># no terminal, não dentro do mysql&gt;
+# backup de um banco
+mysqldump -u root -p --single-transaction --routines --events loja &gt; loja_2026-11-14.sql
+
+# todos os bancos
+mysqldump -u root -p --all-databases &gt; tudo.sql
+
+# restaurar (o banco precisa existir antes)
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS loja"
+mysql -u root -p loja &lt; loja_2026-11-14.sql</pre>
+      <ul class="checks">
+        <li><span class="cmd">--single-transaction</span> faz o backup do InnoDB sem travar as tabelas.</li>
+        <li>Procedures e events só entram com <span class="cmd">--routines</span> e <span class="cmd">--events</span>. Triggers já vão por padrão.</li>
+        <li>Guarde uma cópia fora do servidor.</li>
+        <li><b>Teste a restauração.</b> Backup que nunca foi restaurado pode não funcionar quando você precisar.</li>
+      </ul>
+    </section>
+
+    <!-- 3.9 -->
+    <section>
+      <h2><span class="n">3.9</span>SQL Injection</h2>
+      <p>Acontece quando o texto digitado pelo usuário vira parte do comando SQL.</p>
+<pre class="sql">// ERRADO: concatenando texto
+"SELECT * FROM usuarios WHERE email = '" + email + "'"
+// se email for:  ' OR '1'='1
+// a consulta devolve TODOS os usuários
+
+// CERTO: prepared statement (parâmetro ?)
+query("SELECT * FROM usuarios WHERE email = ?", [email])</pre>
+      <ul class="dots">
+        <li>Sempre use <b>parâmetros</b> (prepared statements) ou um ORM. Nunca monte SQL somando strings.</li>
+        <li>O usuário do app deve ter <b>só os privilégios que precisa</b>. Nunca conecte como root.</li>
+        <li>Parâmetros protegem <b>valores</b>, não nomes de tabela ou coluna. Se o usuário escolhe a coluna de ordenação, compare com uma lista fixa de nomes permitidos.</li>
+        <li>Guarde senhas com <b>hash</b> (bcrypt, argon2), nunca em texto puro.</li>
+      </ul>
+    </section>
+
+    <!-- 3.10 -->
+    <section>
+      <h2><span class="n">3.10</span>Olhando o servidor</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Comando</th><th>Mostra</th></tr></thead>
+          <tbody>
+            <tr><td>SHOW DATABASES;</td><td>Os bancos do servidor</td></tr>
+            <tr><td>USE loja;</td><td>Escolhe o banco de trabalho</td></tr>
+            <tr><td>SHOW TABLES;</td><td>As tabelas do banco</td></tr>
+            <tr><td>DESCRIBE clientes;</td><td>Colunas, tipos e chaves</td></tr>
+            <tr><td>SHOW CREATE TABLE clientes;</td><td>O SQL que cria a tabela</td></tr>
+            <tr><td>SELECT VERSION();</td><td>Versão do MySQL</td></tr>
+            <tr><td>SELECT NOW(), @@system_time_zone, @@time_zone;</td><td>Data e hora, fuso do sistema e fuso que o MySQL está usando</td></tr>
+            <tr><td>SELECT @@character_set_database;</td><td>Charset do banco atual</td></tr>
+            <tr><td>SHOW PROCESSLIST;</td><td>Conexões e consultas rodando agora</td></tr>
+            <tr><td>SHOW EVENTS;</td><td>Tarefas agendadas no banco</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre class="sql">-- tamanho de cada banco em MB
+SELECT table_schema AS banco,
+       ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS tamanho_mb
+FROM information_schema.tables
+GROUP BY table_schema;</pre>
+    </section>
+
+    <!-- 3.11 -->
+    <section>
+      <h2><span class="n">3.11</span>Boas práticas</h2>
+      <ul class="checks">
+        <li>Todo UPDATE e DELETE com WHERE. Teste o WHERE antes com um SELECT.</li>
+        <li>Mudanças em várias tabelas dentro de uma <b>transação</b>.</li>
+        <li><b>DECIMAL</b> para dinheiro e <b>utf8mb4</b> para texto.</li>
+        <li>Datas gravadas em <b>UTC</b>. Converta para o fuso do usuário só na hora de mostrar.</li>
+        <li>Explorando uma tabela grande? Sempre com <span class="cmd">LIMIT</span>.</li>
+        <li>Nomes em <b>snake_case</b>, sem acento e sem espaço. Escolha plural ou singular para as tabelas e mantenha o padrão.</li>
+        <li>Evite <span class="cmd">SELECT *</span> no código do app: liste as colunas que precisa.</li>
+        <li>Índice nas colunas de busca e nas FKs. Confira com <b>EXPLAIN</b>.</li>
+        <li>Usuário do app com o mínimo de privilégios. Nunca root.</li>
+        <li>Backup automático e restauração testada.</li>
+        <li>Versione o esquema com <b>migrations</b> no Git, junto com o código.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Banco de Dados &amp; SQL</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+</main>
+
+<script>
+/* destaca palavras-chave, textos e comentários nos blocos de SQL */
+(function () {
+  var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
+  var re = /(--(?=\s)[^\n]*|#[^\n]*|\/\/[^\n]*)|('[^'\n]*'|"[^"\n]*")|\b([A-Z][A-Z_]+)\b/g;
+  document.querySelectorAll("pre.sql").forEach(function (pre) {
+    var src = pre.textContent, out = "", last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + "</span>";
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + "</span>";
+      else out += '<span class="k">' + m[3] + "</span>";
+      last = m.index + m[0].length;
+    }
+    pre.innerHTML = out + esc(src.slice(last));
+  });
+})();
+</script>
+
+</html>

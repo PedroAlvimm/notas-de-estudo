@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Notas de GitHub Flow</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@300;400;700&display=swap">
+<style>
+/* Layout: uma folha de caderno escrita à caneta sobre a mesa; seções em 2 colunas que viram 1 no celular */
+:root {
+  --desk: #e6ebf2;
+  --paper: #fdfdfa;
+  --ink: #2142a6;          /* caneta azul */
+  --ink-strong: #13205a;   /* azul-marinho dos títulos e caixas */
+  --ink-soft: #6b7bb0;
+  --red: #c0352c;
+  --green: #1b7a49;
+  --marker: rgba(255, 221, 64, .55);
+  --paper-shadow: rgba(19, 32, 90, .14);
+  --font-hand: "Kalam", "Segoe Print", "Comic Sans MS", cursive;
+  --font-title: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #7f8fbf;
+    --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #7f8fbf;
+  --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 17px;
+  line-height: 1.45;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.sheet {
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px var(--paper-shadow), 0 12px 32px var(--paper-shadow);
+  padding: clamp(18px, 4vw, 44px);
+  display: grid;
+  gap: 26px;
+}
+
+/* cabeçalho */
+.head { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; }
+.head h1 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(38px, 6vw, 58px);
+  line-height: 1.05;
+  color: var(--ink-strong);
+  text-wrap: balance;
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 10px;
+}
+.page-tag {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink-strong);
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  padding: 2px 14px;
+  white-space: nowrap;
+}
+
+/* grade de seções */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 40px; }
+.full { grid-column: 1 / -1; }
+section { min-width: 0; }
+section h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--ink-strong);
+  border-bottom: 2px solid var(--ink-strong);
+  border-radius: 0 0 60% 8% / 0 0 5px 3px;
+  padding-bottom: 2px;
+  text-wrap: balance;
+}
+section h2 .n { margin-right: 8px; }
+
+ul.dots, ul.checks, ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+ul.dots li { position: relative; padding-left: 22px; }
+ul.dots li::before {
+  content: ""; position: absolute; left: 4px; top: .62em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--ink-strong);
+}
+ul.checks li { position: relative; padding-left: 28px; }
+ul.checks li::before {
+  content: "\2713"; position: absolute; left: 2px; top: -2px;
+  font-weight: 700; font-size: 22px; color: var(--green);
+}
+ol.steps { counter-reset: s; }
+ol.steps li { counter-increment: s; position: relative; padding-left: 38px; }
+ol.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 1px;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border: 2px solid var(--ink-strong); border-radius: 50% 46% 52% 48%;
+  font-weight: 700; font-size: 15px; color: var(--ink-strong); line-height: 1;
+}
+
+b, strong { color: var(--ink-strong); font-weight: 700; }
+.cmd {
+  font-weight: 700;
+  color: var(--ink-strong);
+  background: linear-gradient(transparent 38%, var(--marker) 38%, var(--marker) 88%, transparent 88%);
+  padding: 0 3px;
+  white-space: nowrap;
+}
+.red { color: var(--red); }
+.green { color: var(--green); }
+.note { color: var(--ink-soft); font-size: 15px; margin: 8px 0 0; }
+
+/* tabelas desenhadas */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--ink-strong);
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+th, td { border: 1.5px solid var(--ink-strong); padding: 6px 9px; text-align: left; vertical-align: top; }
+th { font-family: var(--font-title); font-size: 21px; color: var(--ink-strong); font-weight: 700; }
+td:first-child { color: var(--ink-strong); font-weight: 700; }
+td .cmd { white-space: nowrap; }
+
+/* diagramas */
+.diagram { overflow-x: auto; }
+.diagram svg { display: block; width: 100%; height: auto; }
+.diagram.wide svg { min-width: 640px; }
+svg .ln { fill: none; stroke: var(--ink-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+svg .ar { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+svg .main { fill: none; stroke: var(--ink-strong); stroke-width: 3; stroke-linecap: round; }
+svg .br { fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; }
+svg .dot { fill: var(--paper); stroke: var(--ink-strong); stroke-width: 2.5; }
+svg .dot-f { fill: var(--green); stroke: var(--green); stroke-width: 2.5; }
+svg .mk { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+svg .fillpaper { fill: var(--paper); }
+svg text { font-family: var(--font-hand); fill: var(--ink); font-size: 15px; }
+svg .t-strong { fill: var(--ink-strong); font-weight: 700; font-size: 17px; }
+svg .t-title { font-family: var(--font-title); fill: var(--ink-strong); font-weight: 700; font-size: 24px; }
+svg .t-cmd { fill: var(--ink-strong); font-weight: 700; font-size: 15px; }
+svg .t-green { fill: var(--green); font-weight: 700; }
+svg .t-soft { fill: var(--ink-soft); font-size: 13.5px; }
+svg .hl { fill: var(--marker); }
+
+/* conflito */
+.conflict {
+  margin: 8px 0 10px;
+  border: 2px dashed var(--ink-strong);
+  border-radius: 14px 4px 16px 5px;
+  padding: 8px 12px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre;
+}
+.conflict .mark { color: var(--red); font-weight: 700; }
+.conflict .k { color: var(--ink-strong); font-weight: 700; }
+
+/* versão semântica */
+.semver { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 8px; margin: 4px 0 12px; }
+.semver .sv-v, .semver .sv-sep { font-family: var(--font-title); font-weight: 700; font-size: 42px; line-height: 1; color: var(--ink-strong); }
+.semver .sv-part { display: grid; justify-items: center; text-align: center; gap: 2px; }
+.semver .sv-part b { font-family: var(--font-title); font-size: 42px; line-height: 1; }
+.semver .sv-part span { font-size: 13.5px; line-height: 1.2; color: var(--ink-soft); max-width: 8.5em; }
+
+.foot {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px;
+  border-top: 1.5px solid var(--ink-strong);
+  padding-top: 10px;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.foot .sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
+
+/* página 2 */
+.sheets { display: grid; gap: 36px; }
+.inner2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 36px; }
+.inner2 > * { min-width: 0; }
+.sub { margin: 6px 0 4px; font-weight: 700; color: var(--ink-strong); }
+.cmd.wrap { white-space: normal; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.rescue {
+  border: 2px dashed var(--red);
+  border-radius: 14px 4px 16px 5px;
+  padding: 10px 14px;
+  display: grid;
+  gap: 6px;
+}
+.rescue h3 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: 26px; line-height: 1.1; color: var(--red); }
+.rescue p { margin: 0; }
+.risk {
+  display: inline-block;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  border: 1.5px solid currentColor;
+  border-radius: 12px 4px 12px 5px;
+  padding: 0 7px;
+  white-space: nowrap;
+}
+.risk.ok { color: var(--green); }
+.risk.warn { color: var(--ink-strong); }
+.risk.bad { color: var(--red); }
+table.plain td:first-child { font-weight: 400; color: var(--ink); }
+
+@media (max-width: 720px) {
+  .grid, .inner2 { grid-template-columns: 1fr; }
+  .head { grid-template-columns: 1fr; }
+  .page-tag { justify-self: start; }
+}
+</style>
+
+<!-- definições compartilhadas dos desenhos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="mk" d="M1.5 1.5 L8.5 5 L1.5 8.5"/>
+    </marker>
+    <filter id="wob" filterUnits="userSpaceOnUse" x="-50" y="-50" width="2000" height="2000">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<main class="sheets">
+<article class="sheet">
+  <header class="head">
+    <h1>1. Fluxo de Trabalho no GitHub</h1>
+    <div class="page-tag">Pág. 1/2</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1.1 -->
+    <section>
+      <h2><span class="n">1.1</span>O que é Git?</h2>
+      <ul class="dots">
+        <li><b>Git</b> é um sistema de <b>controle de versão distribuído</b>: guarda o histórico de cada mudança no código.</li>
+        <li>Cada pessoa tem uma <b>cópia completa</b> do repositório, com todo o histórico, no próprio computador.</li>
+        <li><b>Commit</b> = uma "foto" do projeto com mensagem, autor, data e um hash (ex.: <span class="cmd">a1b2c3d</span>).</li>
+        <li><b>Branch</b> = uma linha de trabalho paralela. Você testa ideias sem mexer na <b>main</b>.</li>
+      </ul>
+    </section>
+
+    <!-- 1.2 -->
+    <section>
+      <h2><span class="n">1.2</span>Git vs GitHub</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 380 200" role="img" aria-label="Computador com Git local enviando com git push para a nuvem do GitHub e recebendo com git pull ou clone">
+          <g filter="url(#wob)">
+            <rect class="ln fillpaper" x="20" y="58" width="122" height="78" rx="6"/>
+            <path class="ln" d="M8 140 L154 140 L162 152 L0 152 Z"/>
+            <path class="ln fillpaper" d="M245 132 a22 22 0 0 1 5 -45 a30 30 0 0 1 55 -20 a24 24 0 0 1 42 35 a18 18 0 0 1 -6 30 Z"/>
+            <path class="ar" d="M150 76 Q 198 40 244 80" marker-end="url(#arr)"/>
+            <path class="ar" d="M248 140 Q 200 178 150 148" marker-end="url(#arr)"/>
+          </g>
+          <text class="t-title" x="81" y="92" text-anchor="middle">Git</text>
+          <text x="81" y="116" text-anchor="middle">repo local</text>
+          <text class="t-title" x="293" y="108" text-anchor="middle">GitHub</text>
+          <text x="293" y="126" text-anchor="middle">repo remoto</text>
+          <text class="t-cmd" x="197" y="40" text-anchor="middle">git push</text>
+          <text class="t-cmd" x="200" y="190" text-anchor="middle">git pull / clone</text>
+        </svg>
+      </div>
+      <ul class="dots">
+        <li><b>Git:</b> a ferramenta. Roda no seu PC, pela linha de comando.</li>
+        <li><b>GitHub:</b> site que hospeda repositórios Git e adiciona colaboração: Pull Requests, Issues, Actions (CI/CD).</li>
+      </ul>
+    </section>
+
+    <!-- 1.3 -->
+    <section class="full">
+      <h2><span class="n">1.3</span>As 4 áreas do Git</h2>
+      <div class="diagram wide">
+        <svg viewBox="0 0 820 262" role="img" aria-label="Working Directory para Staging Area com git add, Staging para Repositório local com git commit, Repositório local para Remoto com git push. Do remoto volta com git fetch e git pull.">
+          <g filter="url(#wob)">
+            <rect class="ln fillpaper" x="10"  y="70" width="185" height="82" rx="8"/>
+            <rect class="ln fillpaper" x="215" y="70" width="185" height="82" rx="8"/>
+            <rect class="ln fillpaper" x="420" y="70" width="185" height="82" rx="8"/>
+            <rect class="ln fillpaper" x="625" y="70" width="185" height="82" rx="8"/>
+            <path class="ar" d="M150 68 Q 205 22 262 66" marker-end="url(#arr)"/>
+            <path class="ar" d="M355 68 Q 410 22 467 66" marker-end="url(#arr)"/>
+            <path class="ar" d="M560 68 Q 615 22 672 66" marker-end="url(#arr)"/>
+            <path class="ar" d="M668 155 Q 615 188 562 157" marker-end="url(#arr)"/>
+            <path class="ar" d="M745 155 C 745 254, 80 254, 80 157" marker-end="url(#arr)"/>
+          </g>
+          <text class="t-strong" x="102" y="104" text-anchor="middle">Working Directory</text>
+          <text class="t-soft"   x="102" y="128" text-anchor="middle">(seus arquivos)</text>
+          <text class="t-strong" x="307" y="104" text-anchor="middle">Staging Area</text>
+          <text class="t-soft"   x="307" y="128" text-anchor="middle">(o que vai no commit)</text>
+          <text class="t-strong" x="512" y="104" text-anchor="middle">Repositório Local</text>
+          <text class="t-soft"   x="512" y="128" text-anchor="middle">(pasta .git, histórico)</text>
+          <text class="t-strong" x="717" y="104" text-anchor="middle">Repositório Remoto</text>
+          <text class="t-soft"   x="717" y="128" text-anchor="middle">(GitHub, origin)</text>
+          <rect class="hl" x="170" y="20" width="70" height="14" rx="3"/>
+          <rect class="hl" x="365" y="20" width="90" height="14" rx="3"/>
+          <rect class="hl" x="575" y="20" width="80" height="14" rx="3"/>
+          <text class="t-cmd" x="205" y="32" text-anchor="middle">git add</text>
+          <text class="t-cmd" x="410" y="32" text-anchor="middle">git commit</text>
+          <text class="t-cmd" x="615" y="32" text-anchor="middle">git push</text>
+          <text class="t-cmd" x="615" y="200" text-anchor="middle">git fetch</text>
+          <text class="t-cmd" x="412" y="250" text-anchor="middle">git pull  =  fetch + merge</text>
+        </svg>
+      </div>
+      <p class="note">Dica: <span class="cmd">git status</span> mostra em qual área cada arquivo está. <span class="cmd">git restore --staged arq</span> tira um arquivo da staging.</p>
+    </section>
+
+    <!-- 1.4 -->
+    <section>
+      <h2><span class="n">1.4</span>GitHub Flow em um olhar</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 400 200" role="img" aria-label="Linha main com commits; uma branch feature/login sai da main, recebe três commits, vira um Pull Request e volta para a main com merge">
+          <g filter="url(#wob)">
+            <path class="main" d="M18 152 L 372 152"/>
+            <path class="br" d="M92 152 C 112 152, 112 78, 140 78 L 252 78 C 290 78, 300 152, 322 152"/>
+            <rect class="ln fillpaper" x="240" y="22" width="122" height="30" rx="12"/>
+          </g>
+          <circle class="dot" cx="42" cy="152" r="8"/>
+          <circle class="dot" cx="92" cy="152" r="8"/>
+          <circle class="dot" cx="322" cy="152" r="8"/>
+          <circle class="dot-f" cx="158" cy="78" r="7"/>
+          <circle class="dot-f" cx="198" cy="78" r="7"/>
+          <circle class="dot-f" cx="238" cy="78" r="7"/>
+          <text class="t-strong" x="18" y="180">main</text>
+          <text class="t-green" x="130" y="52">feature/login</text>
+          <text class="t-cmd" x="301" y="43" text-anchor="middle">③ Pull Request</text>
+          <text x="96" y="118" text-anchor="end">① branch</text>
+          <text x="198" y="106" text-anchor="middle">② commits</text>
+          <text x="332" y="120">④ merge</text>
+          <text class="t-soft" x="200" y="180" text-anchor="middle">(review + testes)</text>
+        </svg>
+      </div>
+      <p class="note">Regra de ouro: a <b>main</b> está sempre pronta para ir para produção. Todo trabalho novo nasce numa branch.</p>
+    </section>
+
+    <!-- 1.5 -->
+    <section>
+      <h2><span class="n">1.5</span>Passo a passo</h2>
+      <ol class="steps">
+        <li><b>Atualize:</b> <span class="cmd">git clone &lt;url&gt;</span> (1ª vez) ou <span class="cmd">git pull</span></li>
+        <li><b>Crie a branch:</b> <span class="cmd">git switch -c feature/login</span></li>
+        <li><b>Edite e salve:</b> <span class="cmd">git add .</span> e <span class="cmd">git commit -m "feat: tela de login"</span></li>
+        <li><b>Envie:</b> <span class="cmd">git push -u origin feature/login</span></li>
+        <li><b>Abra o Pull Request</b> no GitHub explicando o que mudou e por quê.</li>
+        <li><b>Review + CI:</b> colegas comentam, os testes (Actions) precisam passar.</li>
+        <li><b>Merge</b> na main e apague a branch.</li>
+        <li><b>Volte pra main:</b> <span class="cmd">git switch main</span> e <span class="cmd">git pull</span></li>
+      </ol>
+    </section>
+
+    <!-- 1.6 -->
+    <section>
+      <h2><span class="n">1.6</span>O que é um Pull Request?</h2>
+      <ul class="dots">
+        <li><b>PR = pedido para juntar</b> sua branch na main: "revisem e incorporem minhas mudanças".</li>
+        <li>Mostra o <b>diff</b>: linhas <span class="green">adicionadas</span> e <span class="red">removidas</span>, arquivo por arquivo.</li>
+        <li>Colegas fazem o <b>review</b>: comentam linhas, pedem mudanças ou aprovam.</li>
+        <li>Novos commits na mesma branch <b>entram sozinhos</b> no PR, e os testes rodam de novo.</li>
+        <li>Ainda não terminou? Abra como <b>Draft</b> (rascunho). No GitLab o nome é <b>Merge Request</b>.</li>
+      </ul>
+    </section>
+
+    <!-- 1.7 -->
+    <section>
+      <h2><span class="n">1.7</span>Issues e Projects</h2>
+      <ul class="dots">
+        <li><b>Issue</b> = tarefa, bug ou ideia, com um número (ex.: <b>#12</b>).</li>
+        <li>Organize com <b>labels</b> (bug, enhancement), <b>assignees</b> (responsável) e <b>milestones</b> (meta ou versão).</li>
+        <li>Escreva <span class="cmd">Closes #12</span> na descrição do PR: quando ele for aceito, a issue fecha sozinha.</li>
+        <li><b>Projects</b> = quadro kanban (Todo → In Progress → Done) com issues e PRs.</li>
+      </ul>
+      <p class="note">Ciclo completo: issue #12 → branch → commits → PR "Closes #12" → testes ✓ → review → merge.</p>
+    </section>
+
+    <!-- 1.8 -->
+    <section>
+      <h2><span class="n">1.8</span>GitHub Actions (CI/CD)</h2>
+      <ul class="dots">
+        <li>Roda tarefas automáticas a cada push ou PR: testes, lint, build, deploy.</li>
+        <li>Fica em <span class="cmd">.github/workflows/ci.yml</span>:</li>
+      </ul>
+<div class="conflict"><span class="k">name:</span> CI
+<span class="k">on:</span> [push, pull_request]
+<span class="k">jobs:</span>
+  <span class="k">test:</span>
+    <span class="k">runs-on:</span> ubuntu-latest
+    <span class="k">steps:</span>
+      - <span class="k">uses:</span> actions/checkout@v4
+      - <span class="k">run:</span> npm ci
+      - <span class="k">run:</span> npm test</div>
+      <ul class="dots">
+        <li>O resultado aparece no PR: <span class="green">✓ verde</span> libera o merge, <span class="red">✗ vermelho</span> precisa corrigir.</li>
+        <li><b>CI</b> = testar sempre. <b>CD</b> = publicar automaticamente.</li>
+      </ul>
+    </section>
+
+    <!-- 1.9 -->
+    <section>
+      <h2><span class="n">1.9</span>Fork: contribuir com projetos de outros</h2>
+      <ol class="steps">
+        <li>Clique em <b>Fork</b>: cria uma cópia do repositório na sua conta.</li>
+        <li><span class="cmd">git clone</span> do seu fork e crie uma branch.</li>
+        <li>Ligue ao original: <span class="cmd">git remote add upstream &lt;url&gt;</span></li>
+        <li>Mantenha atualizado com <span class="cmd">git fetch upstream</span> e dê push no seu fork.</li>
+        <li>Abra o PR do seu fork <b>para o repositório original</b>.</li>
+      </ol>
+      <p class="note"><b>origin</b> = o seu fork · <b>upstream</b> = o projeto original.</p>
+    </section>
+
+    <!-- 1.10 -->
+    <section>
+      <h2><span class="n">1.10</span>Comandos essenciais</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Comando</th><th>O que faz</th></tr></thead>
+          <tbody>
+            <tr><td><span class="cmd">git init</span></td><td>Cria um repositório novo na pasta.</td></tr>
+            <tr><td><span class="cmd">git status</span></td><td>Mostra o que mudou e o que está na staging.</td></tr>
+            <tr><td><span class="cmd">git diff</span></td><td>Mostra as linhas alteradas.</td></tr>
+            <tr><td><span class="cmd">git log --oneline</span></td><td>Histórico resumido, 1 commit por linha.</td></tr>
+            <tr><td><span class="cmd">git branch</span></td><td>Lista as branches locais.</td></tr>
+            <tr><td><span class="cmd">git merge &lt;br&gt;</span></td><td>Junta outra branch na branch atual.</td></tr>
+            <tr><td><span class="cmd">git stash</span></td><td>Guarda mudanças sem commitar (pega de volta com <span class="cmd">pop</span>).</td></tr>
+            <tr><td><span class="cmd">git revert &lt;hash&gt;</span></td><td>Desfaz um commit criando um commit novo (seguro).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 1.11 -->
+    <section>
+      <h2><span class="n">1.11</span>Merge, Squash ou Rebase?</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Botão do PR</th><th>Histórico</th><th>Quando usar</th></tr></thead>
+          <tbody>
+            <tr><td>Create a merge commit</td><td>Mantém todos os commits + 1 commit de merge.</td><td>Quer o histórico fiel da branch.</td></tr>
+            <tr><td>Squash and merge</td><td>Junta a branch inteira em <b>1 commit</b>.</td><td>PRs pequenos, main limpa.</td></tr>
+            <tr><td>Rebase and merge</td><td>Reaplica os commits em cima da main. Linha reta, sem commit de merge.</td><td>Quer histórico linear e commits bem escritos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><span class="red">Cuidado:</span> não faça rebase de uma branch que outras pessoas já usam. Ele reescreve o histórico.</p>
+    </section>
+
+    <!-- 1.12 -->
+    <section>
+      <h2><span class="n">1.12</span>Conflito de merge</h2>
+      <p style="margin:0">Acontece quando duas branches mudam <b>a mesma linha</b>. O Git marca o trecho assim:</p>
+<div class="conflict"><span class="mark">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+const preco = 10;      <span class="green">← sua branch</span>
+<span class="mark">=======</span>
+const preco = 12;      <span class="green">← a que está chegando</span>
+<span class="mark">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/preco</span></div>
+      <ol class="steps">
+        <li>Escolha uma versão (ou combine as duas).</li>
+        <li>Apague as linhas <span class="red">&lt;&lt;&lt;</span>, <span class="red">===</span> e <span class="red">&gt;&gt;&gt;</span>.</li>
+        <li><span class="cmd">git add arquivo</span> e <span class="cmd">git commit</span> para concluir.</li>
+      </ol>
+    </section>
+
+    <!-- 1.13 -->
+    <section>
+      <h2><span class="n">1.13</span>Tags e Releases</h2>
+      <ul class="dots">
+        <li><b>Tag</b> marca um commit importante, quase sempre uma versão.</li>
+        <li>Versão semântica:</li>
+      </ul>
+      <div class="semver" role="img" aria-label="Versão 2.4.1: 2 é MAJOR, quebra compatibilidade; 4 é MINOR, função nova; 1 é PATCH, correção de bug">
+        <span class="sv-v">v</span>
+        <div class="sv-part"><b class="red">2</b><span>MAJOR<br>quebra compatibilidade</span></div>
+        <span class="sv-sep">.</span>
+        <div class="sv-part"><b class="green">4</b><span>MINOR<br>função nova</span></div>
+        <span class="sv-sep">.</span>
+        <div class="sv-part"><b>1</b><span>PATCH<br>correção de bug</span></div>
+      </div>
+      <ul class="dots">
+        <li>Crie e envie: <span class="cmd">git tag v2.4.1</span> e <span class="cmd">git push --tags</span></li>
+        <li><b>Release</b> no GitHub = tag + notas do que mudou + arquivos para baixar.</li>
+      </ul>
+    </section>
+
+    <!-- 1.14 -->
+    <section>
+      <h2><span class="n">1.14</span>Arquivos do repositório</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Arquivo</th><th>Para que serve</th></tr></thead>
+          <tbody>
+            <tr><td>README.md</td><td>Cartão de visita: o que é, como instalar e usar.</td></tr>
+            <tr><td>.gitignore</td><td>Lista do que o Git deve ignorar.</td></tr>
+            <tr><td>LICENSE</td><td>Regras de uso do código.</td></tr>
+            <tr><td>CONTRIBUTING.md</td><td>Como contribuir com o projeto.</td></tr>
+            <tr><td>.github/<br>CODEOWNERS</td><td>Quem é chamado para revisar cada pasta.</td></tr>
+            <tr><td>.github/<br>pull_request_template.md</td><td>Modelo que já preenche a descrição de todo PR.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 1.15 -->
+    <section>
+      <h2><span class="n">1.15</span>Boas práticas</h2>
+      <ul class="checks">
+        <li>Commits pequenos e com mensagem clara: <span class="cmd">feat:</span> <span class="cmd">fix:</span> <span class="cmd">docs:</span> (Conventional Commits).</li>
+        <li>Nunca commite direto na main. Ative <b>branch protection</b> no repositório.</li>
+        <li>Faça <span class="cmd">git pull</span> antes de começar e antes do push.</li>
+        <li>Use <b>.gitignore</b> para não subir <span class="cmd">node_modules</span>, <span class="cmd">.env</span> e senhas.</li>
+        <li>PR pequeno é revisado mais rápido e quebra menos coisa.</li>
+        <li>Rode os testes localmente antes de pedir review.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Git &amp; GitHub</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<article class="sheet">
+  <header class="head">
+    <h1>2. Git no Dia a Dia</h1>
+    <div class="page-tag">Pág. 2/2</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 2.1 -->
+    <section>
+      <h2><span class="n">2.1</span>Primeiro dia: configuração e acesso</h2>
+      <ol class="steps">
+        <li><b>Diga quem você é</b> (aparece em todo commit):<br>
+          <span class="cmd wrap">git config --global user.name "Pedro Alvim"</span><br>
+          <span class="cmd wrap">git config --global user.email "seu@email.com"</span></li>
+        <li><b>Use main como nome padrão:</b> <span class="cmd wrap">git config --global init.defaultBranch main</span></li>
+        <li><b>Crie uma chave SSH:</b> <span class="cmd wrap">ssh-keygen -t ed25519 -C "seu@email.com"</span> e cole o conteúdo do arquivo <b>.pub</b> em GitHub → Settings → SSH and GPG keys.</li>
+        <li><b>Teste a conexão:</b> <span class="cmd">ssh -T git@github.com</span></li>
+      </ol>
+      <p class="note"><span class="red">Atenção:</span> desde 2021 o GitHub não aceita sua senha no push. Use SSH, um <b>Personal Access Token</b> ou faça login com <span class="cmd">gh auth login</span>.</p>
+    </section>
+
+    <!-- 2.2 -->
+    <section>
+      <h2><span class="n">2.2</span>Por que commitar numa branch separada?</h2>
+      <ul class="dots">
+        <li><b>A main fica sempre funcionando.</b> O que está nela pode ir para produção a qualquer hora.</li>
+        <li><b>Você pode errar à vontade.</b> Se a ideia não der certo, é só apagar a branch.</li>
+        <li><b>Trabalho em paralelo:</b> várias pessoas (ou várias tarefas suas) andam sem pisar uma na outra.</li>
+        <li><b>Só com branch existe PR:</b> review e testes acontecem <b>antes</b> de o código entrar na main.</li>
+        <li><b>Histórico organizado:</b> cada branch é uma tarefa, fácil de achar e de desfazer.</li>
+        <li>Com <b>branch protection</b> ligada, o push direto na main é bloqueado.</li>
+      </ul>
+    </section>
+
+    <!-- 2.3 -->
+    <section class="full">
+      <h2><span class="n">2.3</span>Commit numa branch separada, passo a passo</h2>
+      <div class="inner2">
+        <div>
+          <ol class="steps">
+            <li><b>Parta da main atualizada:</b> <span class="cmd">git switch main</span> e <span class="cmd">git pull</span></li>
+            <li><b>Crie a branch e entre nela:</b> <span class="cmd">git switch -c feature/cadastro</span><br><span class="note">(forma antiga: <span class="cmd">git checkout -b feature/cadastro</span>)</span></li>
+            <li><b>Confira onde está:</b> <span class="cmd">git branch</span> mostra um <b>*</b> na branch atual. O <span class="cmd">git status</span> diz "On branch feature/cadastro".</li>
+            <li><b>Trabalhe e commite normalmente:</b> <span class="cmd">git add .</span> e <span class="cmd wrap">git commit -m "feat: formulário de cadastro"</span>. O commit vai para a branch, e a main não muda.</li>
+            <li><b>Primeiro push da branch:</b> <span class="cmd wrap">git push -u origin feature/cadastro</span>. O <b>-u</b> liga a branch local à do GitHub. Dali em diante, basta <span class="cmd">git push</span>.</li>
+            <li><b>Abra o PR:</b> base: <b>main</b> ← compare: <b>feature/cadastro</b>.</li>
+          </ol>
+        </div>
+        <div style="display:grid; gap:14px; align-content:start">
+          <div class="diagram">
+            <svg viewBox="0 0 400 175" role="img" aria-label="A main para no segundo commit. A branch feature/cadastro sai dela e recebe três commits. HEAD aponta para o último commit da branch.">
+              <g filter="url(#wob)">
+                <path class="main" d="M18 125 L 110 125"/>
+                <path class="br" d="M90 125 C 115 125, 115 58, 145 58 L 292 58"/>
+              </g>
+              <circle class="dot" cx="42" cy="125" r="8"/>
+              <circle class="dot" cx="90" cy="125" r="8"/>
+              <circle class="dot-f" cx="172" cy="58" r="7"/>
+              <circle class="dot-f" cx="232" cy="58" r="7"/>
+              <circle class="dot-f" cx="292" cy="58" r="7"/>
+              <text class="t-green" x="232" y="32" text-anchor="middle">feature/cadastro</text>
+              <text class="t-cmd" x="306" y="63">← HEAD</text>
+              <text class="t-soft" x="306" y="84">(você está aqui)</text>
+              <text class="t-strong" x="90" y="156" text-anchor="middle">main</text>
+              <text class="t-soft" x="128" y="130">← a main fica parada até o merge</text>
+            </svg>
+          </div>
+          <p class="note" style="margin:0"><b>Regra:</b> o commit sempre vai para a branch onde o <b>HEAD</b> está. Troque de branch <b>antes</b> de commitar.</p>
+          <div class="rescue">
+            <h3>Ops! Mexi na main sem querer</h3>
+            <p><b>Ainda não commitou?</b> Rode <span class="cmd">git switch -c feature/x</span>. As mudanças vão junto para a branch nova.</p>
+            <p><b>Já commitou, mas não deu push?</b></p>
+            <ol class="steps">
+              <li><span class="cmd">git branch feature/x</span> guarda o commit numa branch nova.</li>
+              <li><span class="cmd wrap">git reset --hard origin/main</span> volta a main ao estado do GitHub.</li>
+              <li><span class="cmd">git switch feature/x</span> e siga trabalhando.</li>
+            </ol>
+            <p class="note" style="margin:0">Antes do passo 2, confira no <span class="cmd">git status</span> que não há mudanças sem commit. Se já deu push na main, não use reset: use <span class="cmd">git revert</span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.4 -->
+    <section>
+      <h2><span class="n">2.4</span>Nomes de branch</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Prefixo</th><th>Para quê</th><th>Exemplo</th></tr></thead>
+          <tbody>
+            <tr><td>feature/</td><td>Função nova</td><td>feature/login</td></tr>
+            <tr><td>fix/</td><td>Correção de bug</td><td>fix/botao-salvar</td></tr>
+            <tr><td>hotfix/</td><td>Correção urgente em produção</td><td>hotfix/pagamento</td></tr>
+            <tr><td>chore/</td><td>Manutenção, dependências, config</td><td>chore/atualiza-deps</td></tr>
+            <tr><td>docs/</td><td>Documentação</td><td>docs/readme</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Use letras minúsculas e hífen no lugar de espaço. Dá para incluir o nº da issue: <b>fix/12-botao-salvar</b>.</p>
+    </section>
+
+    <!-- 2.5 -->
+    <section>
+      <h2><span class="n">2.5</span>Mantendo a branch atualizada</h2>
+      <p style="margin:0 0 8px">Enquanto você trabalha, a main recebe commits de outras pessoas. Traga essas mudanças para a sua branch:</p>
+      <p class="sub">Opção 1: merge (mais simples e seguro)</p>
+      <p style="margin:0"><span class="cmd">git fetch origin</span> e <span class="cmd">git merge origin/main</span></p>
+      <p class="sub">Opção 2: rebase (histórico em linha reta)</p>
+      <p style="margin:0"><span class="cmd">git fetch origin</span> e <span class="cmd">git rebase origin/main</span>, depois <span class="cmd wrap">git push --force-with-lease</span></p>
+      <ul class="checks" style="margin-top:10px">
+        <li>Atualize com frequência: um conflito pequeno hoje é melhor que um gigante na sexta.</li>
+        <li><span class="cmd">git pull --rebase</span> evita commits "Merge branch..." à toa.</li>
+      </ul>
+    </section>
+
+    <!-- 2.6 -->
+    <section class="full">
+      <h2><span class="n">2.6</span>Como desfazer erros</h2>
+      <div class="table-wrap">
+        <table class="plain">
+          <thead><tr><th>Situação</th><th>Comando</th><th>Risco</th></tr></thead>
+          <tbody>
+            <tr><td>Quero descartar mudanças num arquivo (sem commit)</td><td><span class="cmd">git restore arquivo</span></td><td><span class="risk warn">cuidado</span> perde as mudanças do arquivo</td></tr>
+            <tr><td>Coloquei um arquivo na staging sem querer</td><td><span class="cmd">git restore --staged arquivo</span></td><td><span class="risk ok">seguro</span></td></tr>
+            <tr><td>Errei a mensagem ou esqueci um arquivo no último commit</td><td><span class="cmd">git add arquivo</span> + <span class="cmd">git commit --amend</span></td><td><span class="risk ok">seguro</span> se ainda não deu push</td></tr>
+            <tr><td>Desfazer o último commit e manter as mudanças prontas</td><td><span class="cmd">git reset --soft HEAD~1</span></td><td><span class="risk ok">seguro</span> mudanças ficam na staging</td></tr>
+            <tr><td>Desfazer o último commit e tirar da staging</td><td><span class="cmd">git reset HEAD~1</span></td><td><span class="risk ok">seguro</span> arquivos ficam modificados</td></tr>
+            <tr><td>Jogar tudo fora e voltar a um commit</td><td><span class="cmd">git reset --hard &lt;hash&gt;</span></td><td><span class="risk bad">perigoso</span> apaga o que não foi commitado</td></tr>
+            <tr><td>Desfazer um commit que já está no GitHub</td><td><span class="cmd">git revert &lt;hash&gt;</span></td><td><span class="risk ok">seguro</span> cria um commit novo</td></tr>
+            <tr><td>"Perdi um commit!"</td><td><span class="cmd">git reflog</span> e depois <span class="cmd">git switch -c resgate &lt;hash&gt;</span></td><td><span class="risk ok">rede de segurança</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><b>Regra:</b> depois do push, prefira <span class="cmd">revert</span>. O <span class="cmd">reset</span> e o <span class="cmd">--amend</span> reescrevem o histórico e atrapalham quem já baixou o código.</p>
+    </section>
+
+    <!-- 2.7 -->
+    <section>
+      <h2><span class="n">2.7</span>Segredos e segurança</h2>
+      <ul class="dots">
+        <li><b>Nunca commite</b> senhas, tokens, chaves de API ou o <b>.env</b>. Coloque no .gitignore e suba um <b>.env.example</b> sem os valores.</li>
+        <li><span class="red"><b>Commitou sem querer?</b></span> Apagar o arquivo não basta, porque a chave continua no histórico. <b>Revogue a chave e gere outra na hora.</b></li>
+        <li>Nas Actions, guarde chaves em <b>Secrets</b> (Settings → Secrets and variables → Actions) e leia com <span class="cmd wrap">${{ secrets.API_KEY }}</span>.</li>
+        <li><b>Secret scanning e push protection:</b> o GitHub pode bloquear o push quando detecta uma chave conhecida.</li>
+        <li><b>Dependabot</b> avisa sobre dependências com falha de segurança e abre PRs de atualização.</li>
+        <li>Ative a <b>verificação em 2 etapas (2FA)</b> na sua conta.</li>
+      </ul>
+    </section>
+
+    <!-- 2.8 -->
+    <section>
+      <h2><span class="n">2.8</span>Bom PR e code review</h2>
+      <p class="sub" style="margin-top:0">Um bom PR tem:</p>
+      <ul class="checks">
+        <li>Título claro: <b>feat: cadastro de usuário</b>.</li>
+        <li>Descrição: o que mudou, por quê, <b>como testar</b> e prints se mexeu na tela.</li>
+        <li>Tamanho pequeno. Algumas centenas de linhas ainda dá para revisar com atenção.</li>
+        <li>Ligação com a issue: <span class="cmd">Closes #12</span>.</li>
+      </ul>
+      <p class="sub">No review, você escolhe:</p>
+      <ul class="dots">
+        <li><b>Comment</b> (só comentar), <b>Approve</b> (aprovar) ou <b>Request changes</b> (pedir mudanças).</li>
+        <li><b>Suggestion:</b> propõe o código pronto no comentário, e o autor aceita com um clique.</li>
+        <li>Critique o código, não a pessoa, e explique o porquê.</li>
+      </ul>
+    </section>
+
+    <!-- 2.9 -->
+    <section>
+      <h2><span class="n">2.9</span>Outros fluxos de trabalho</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fluxo</th><th>Como funciona</th><th>Bom para</th></tr></thead>
+          <tbody>
+            <tr><td>GitHub Flow</td><td>main + branches curtas de feature. Merge e deploy contínuos.</td><td>A maioria dos projetos e times pequenos.</td></tr>
+            <tr><td>Git Flow</td><td>main + develop, com branches feature/, release/ e hotfix/.</td><td>Produtos com versões programadas, como apps mobile.</td></tr>
+            <tr><td>Trunk-based</td><td>Todos integram na main várias vezes ao dia. Branches de horas e feature flags.</td><td>Times grandes com testes automáticos fortes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2.10 -->
+    <section>
+      <h2><span class="n">2.10</span>Ferramentas</h2>
+      <ul class="dots">
+        <li><b>GitHub CLI (gh):</b> <span class="cmd">gh pr create</span>, <span class="cmd">gh pr checkout 42</span>, <span class="cmd">gh issue list</span>. Faz PR sem sair do terminal.</li>
+        <li><b>GitHub Desktop:</b> interface visual para commit, branch e push.</li>
+        <li><b>VS Code:</b> aba Source Control com diff e botões para resolver conflitos (Accept Current, Incoming ou Both).</li>
+        <li><b>Tecla "."</b> em qualquer repositório no GitHub abre um editor no navegador (github.dev).</li>
+        <li><b>Codespaces:</b> ambiente de desenvolvimento completo na nuvem, já com o repositório aberto.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Git &amp; GitHub</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+</main>
+
+</html>
