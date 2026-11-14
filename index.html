@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notas de Estudo · Pedro Alvim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@400;700&display=swap">
+<style>
+:root {
+  --desk: #e6ebf2; --paper: #fdfdfa; --ink: #2142a6; --ink-strong: #13205a; --ink-soft: #6b7bb0;
+  --marker: rgba(255, 221, 64, .55); --paper-shadow: rgba(19, 32, 90, .14);
+  --font-hand: "Kalam", "Segoe Print", "Comic Sans MS", cursive;
+  --font-title: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+    --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5); color-scheme: dark; }
+}
+body { margin: 0; background: var(--desk); color: var(--ink); font-family: var(--font-hand); font-size: 18px; line-height: 1.45;
+  padding: 40px max(16px, env(safe-area-inset-right, 0px)) 48px max(16px, env(safe-area-inset-left, 0px)); }
+.sheet { max-width: 760px; margin: 0 auto; background: var(--paper); border-radius: 3px; padding: clamp(20px, 5vw, 48px);
+  box-shadow: 0 1px 2px var(--paper-shadow), 0 12px 32px var(--paper-shadow); }
+h1 { margin: 0 0 6px; font-family: var(--font-title); font-size: clamp(44px, 8vw, 64px); line-height: 1.05; color: var(--ink-strong);
+  text-decoration: underline; text-decoration-thickness: 2.5px; text-underline-offset: 10px; }
+.lede { margin: 14px 0 26px; color: var(--ink-soft); }
+ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+a.card { display: block; text-decoration: none; color: inherit; padding: 14px 18px;
+  border: 2px solid var(--ink-strong); border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; }
+a.card:hover, a.card:focus-visible { background: var(--marker); outline: none; }
+a.card b { display: block; font-family: var(--font-title); font-size: 32px; line-height: 1.1; color: var(--ink-strong); }
+a.card span { color: var(--ink); }
+.foot { margin-top: 30px; display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 8px;
+  border-top: 1.5px solid var(--ink-strong); padding-top: 10px; color: var(--ink-soft); font-size: 15px; }
+.foot a { color: var(--ink); }
+.sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <h1>Notas de Estudo</h1>
+  <p class="lede">Anotações em estilo caderno, escritas para revisar rápido.</p>
+  <ul>
+    <li><a class="card" href="git-e-github.html"><b>Git e GitHub</b><span>2 páginas: áreas do Git, GitHub Flow, Pull Requests, Issues, Actions, branches, conflitos e como desfazer erros.</span></a></li>
+    <li><a class="card" href="banco-de-dados-sql.html"><b>Banco de Dados e SQL</b><span>3 páginas: fundamentos, consultas, JOINs, índices, transações, permissões, backup e segurança (MySQL 8).</span></a></li>
+  </ul>
+  <div class="foot">
+    <span>Código no <a href="https://github.com/PedroAlvimm/notas-de-estudo">GitHub</a></span>
+    <span class="sig">Pedro Alvim</span>
+  </div>
+</main>
+</body>
+</html>
