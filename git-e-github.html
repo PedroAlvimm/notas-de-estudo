@@ -233,6 +233,46 @@ table.plain td:first-child { font-weight: 400; color: var(--ink); }
   .head { grid-template-columns: 1fr; }
   .page-tag { justify-self: start; }
 }
+
+/* impressão e PDF: folhas A4, sempre no tema claro */
+@media print {
+  html:root:not(.x) {
+    --desk: #ffffff; --paper: #ffffff; --ink: #2142a6; --ink-strong: #13205a; --ink-soft: #5d6da3;
+    --red: #c0352c; --green: #1b7a49; --marker: rgba(255, 221, 64, .55);
+    color-scheme: light;
+  }
+  @page { size: A4; margin: 12mm 11mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { padding: 0; font-size: 12.5px; line-height: 1.4; }
+  .sheets { gap: 0; }
+  .sheet { display: block; max-width: none; padding: 0; box-shadow: none; border-radius: 0; }
+  .sheet > * + * { margin-top: 16px; }
+  .sheet + .sheet { break-before: page; }
+  .head { grid-template-columns: 1fr auto; }
+  .head h1 { font-size: 38px; text-underline-offset: 7px; }
+  .page-tag { justify-self: end; font-size: 17px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px 26px; }
+  .grid > section { flex: 0 0 calc(50% - 13px); }
+  .grid > section.full { flex-basis: 100%; }
+  .inner2 { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+  section { break-inside: avoid; }
+  section h2 { font-size: 22px; margin-bottom: 6px; break-after: avoid; }
+  .note { font-size: 11.5px; }
+  .cmd, .cmd.wrap, td .cmd { white-space: normal; }
+  .conflict { font-size: 11.5px; overflow: visible; white-space: pre-wrap; padding: 5px 9px; }
+  table { font-size: 11.5px; }
+  th { font-size: 15px; }
+  th, td { padding: 3px 6px; }
+  .table-wrap, .diagram { overflow: visible; }
+  .diagram.wide svg { min-width: 0; }
+  .semver .sv-v, .semver .sv-sep, .semver .sv-part b { font-size: 32px; }
+  ol.steps li { padding-left: 30px; }
+  ol.steps li::before { width: 20px; height: 20px; font-size: 12px; }
+  ul.checks li::before { font-size: 17px; }
+  .rescue h3 { font-size: 21px; }
+  .foot { break-inside: avoid; font-size: 12px; }
+  .foot .sig { font-size: 24px; }
+}
 </style>
 
 <!-- definições compartilhadas dos desenhos -->
