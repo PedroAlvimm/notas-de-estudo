@@ -7,7 +7,7 @@ Anotações de estudo em estilo caderno escrito à mão, feitas em HTML.
 | Arquivo | Assunto | Conteúdo |
 | --- | --- | --- |
 | [git-e-github.html](git-e-github.html) · [PDF](git-e-github.pdf) | Git e GitHub | 2 páginas: as 4 áreas do Git, GitHub Flow, Pull Requests, Issues, GitHub Actions, fork, merge/squash/rebase, conflitos, commit em branch separada, como desfazer erros, segurança e boas práticas |
-| [banco-de-dados-sql.html](banco-de-dados-sql.html) · [PDF](banco-de-dados-sql.pdf) | Banco de Dados e SQL (MySQL 8) | 3 páginas: fundamentos, tipos de dados, chaves, normalização, CRUD, JOINs, agregação, subconsultas, índices, transações, views, procedures, triggers, permissões, backup e SQL Injection |
+| [banco-de-dados-sql.html](banco-de-dados-sql.html) · [PDF](banco-de-dados-sql.pdf) | Banco de Dados e SQL (MySQL 8) | 3 páginas: fundamentos, modelagem, modelos de banco (relacional, NoSQL, vetorial), tipos de dados, chaves, normalização, CRUD, JOINs, agregação, subconsultas, índices, transações e ACID, views, procedures, triggers, permissões, backup e SQL Injection |
 
 ## Como ver
 

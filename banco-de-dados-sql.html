@@ -238,11 +238,29 @@ svg .t-cell { font-size: 14px; }
 }
 .foot .sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
 
+/* níveis de modelagem */
+.levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 18px; margin-bottom: 8px; }
+.level {
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  padding: 10px 14px;
+  min-width: 0;
+}
+.level h3 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: 25px; line-height: 1.1; color: var(--ink-strong); }
+.level .tag { font-size: 13.5px; color: var(--ink-soft); }
+.level p { margin: 6px 0 0; font-size: 15.5px; }
+
+/* espaço vetorial */
+svg .pt { fill: var(--ink-strong); }
+svg .pt-q { fill: var(--red); }
+svg .dash { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-dasharray: 4 4; }
+
 @media (max-width: 720px) {
   .grid, .inner2 { grid-template-columns: 1fr; }
   .head { grid-template-columns: 1fr; }
   .page-tag { justify-self: start; }
   .venns { grid-template-columns: repeat(2, 1fr); }
+  .levels { grid-template-columns: 1fr; }
 }
 
 /* impressão e PDF: folhas A4, sempre no tema claro */
@@ -269,6 +287,9 @@ svg .t-cell { font-size: 14px; }
   .grid > section.full { flex-basis: 100%; }
   .inner2 { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
   .venns { grid-template-columns: repeat(4, 1fr); }
+  .levels { grid-template-columns: repeat(3, 1fr); }
+  .level h3 { font-size: 20px; }
+  .level p { font-size: 12px; }
   section { break-inside: avoid; }
   section h2 { font-size: 22px; margin-bottom: 6px; break-after: avoid; }
   .note { font-size: 11.5px; }
@@ -342,7 +363,7 @@ svg .t-cell { font-size: 14px; }
           </tbody>
         </table>
       </div>
-      <p class="note">Sistemas de pedidos, financeiro e cadastros costumam ir de relacional. Cache, logs e dados muito variáveis costumam ir de NoSQL.</p>
+      <p class="note">Sistemas de pedidos, financeiro e cadastros costumam ir de relacional. Cache, logs e dados muito variáveis costumam ir de NoSQL. Cada modelo está na seção 1.10.</p>
     </section>
 
     <!-- 1.3 -->
@@ -395,8 +416,35 @@ svg .t-cell { font-size: 14px; }
     </section>
 
     <!-- 1.5 -->
+    <section class="full">
+      <h2><span class="n">1.5</span>Modelagem em 3 níveis</h2>
+      <p>Antes de escrever SQL, o banco é desenhado do mais abstrato para o mais concreto.</p>
+      <div class="levels">
+        <div class="level">
+          <h3>1. Conceitual</h3>
+          <span class="tag">o que existe no negócio</span>
+          <p><b>Entidades</b> (Cliente, Pedido), seus <b>atributos</b> e os <b>relacionamentos</b> ("Cliente faz Pedido"). Não pensa em banco nenhum.</p>
+          <p>Desenhado como <b>DER</b> (Diagrama Entidade-Relacionamento). Serve para conversar com quem não é técnico.</p>
+        </div>
+        <div class="level">
+          <h3>2. Lógico</h3>
+          <span class="tag">tabelas e chaves</span>
+          <p>Vira <b>tabelas</b>, <b>colunas</b>, <b>PK</b>, <b>FK</b> e cardinalidade (1:N, N:N). Aqui entra a <b>normalização</b>.</p>
+          <p>Ainda vale para qualquer banco relacional.</p>
+        </div>
+        <div class="level">
+          <h3>3. Físico</h3>
+          <span class="tag">o SQL de um banco específico</span>
+          <p>Tipos exatos (VARCHAR(100), DECIMAL(10,2)), <b>índices</b>, engine, charset. É o CREATE TABLE da seção 2.1.</p>
+          <p>Muda conforme o SGBD: MySQL, PostgreSQL, SQL Server.</p>
+        </div>
+      </div>
+      <p class="note">Ferramentas: MySQL Workbench (desenha o diagrama e gera o SQL), dbdiagram.io, draw.io e brModelo, muito usado em faculdades no Brasil.</p>
+    </section>
+
+    <!-- 1.6 tipos -->
     <section>
-      <h2><span class="n">1.5</span>Tipos de dados (MySQL)</h2>
+      <h2><span class="n">1.6</span>Tipos de dados (MySQL)</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Tipo</th><th>Guarda</th><th>Exemplo</th></tr></thead>
@@ -421,7 +469,7 @@ svg .t-cell { font-size: 14px; }
 
     <!-- 1.6 -->
     <section>
-      <h2><span class="n">1.6</span>Chaves e restrições</h2>
+      <h2><span class="n">1.7</span>Chaves e restrições</h2>
       <ul class="dots">
         <li><b>PRIMARY KEY (PK):</b> identifica cada linha. Única e nunca NULL. Uma por tabela, mas pode juntar várias colunas (chave composta).</li>
         <li><b>FOREIGN KEY (FK):</b> coluna que aponta para a PK de outra tabela. Impede pedido de cliente que não existe.</li>
@@ -442,7 +490,7 @@ svg .t-cell { font-size: 14px; }
 
     <!-- 1.7 -->
     <section>
-      <h2><span class="n">1.7</span>Relacionamentos</h2>
+      <h2><span class="n">1.8</span>Relacionamentos</h2>
       <div class="diagram">
         <svg viewBox="0 0 420 178" role="img" aria-label="Relação 1 para N: um cliente tem vários pedidos. Relação N para N: alunos e cursos ligados pela tabela matrículas.">
           <g filter="url(#wob)">
@@ -475,7 +523,7 @@ svg .t-cell { font-size: 14px; }
 
     <!-- 1.8 -->
     <section>
-      <h2><span class="n">1.8</span>Normalização</h2>
+      <h2><span class="n">1.9</span>Normalização</h2>
       <p>Organizar as tabelas para não repetir dados e evitar inconsistência.</p>
       <ul class="dots">
         <li><b>1FN:</b> cada célula guarda <b>um valor só</b>. Nada de "café, leite, pão" numa coluna: vira uma linha por produto.</li>
@@ -483,6 +531,72 @@ svg .t-cell { font-size: 14px; }
         <li><b>3FN:</b> 2FN + nenhuma coluna depende de outra coluna comum. Se o CEP define a cidade, a cidade sai da tabela de clientes.</li>
       </ul>
       <p class="note">Para lembrar: cada coluna depende "da chave, da chave inteira e de nada além da chave". Em relatórios pesados, às vezes se <b>desnormaliza</b> de propósito para ganhar velocidade.</p>
+    </section>
+
+    <!-- 1.10 -->
+    <section>
+      <h2><span class="n">1.10</span>Modelos de banco de dados</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Modelo</th><th>Como guarda / bom para</th><th>Exemplos</th></tr></thead>
+          <tbody>
+            <tr><td>Relacional</td><td>Tabelas ligadas por chaves. Cadastros, vendas, financeiro.</td><td>MySQL, PostgreSQL, SQL Server, Oracle</td></tr>
+            <tr><td>Documento</td><td>Objetos parecidos com JSON. Dados de formato variável, catálogos.</td><td>MongoDB, Firestore</td></tr>
+            <tr><td>Chave-valor</td><td>Uma chave aponta para um valor. Cache, sessão de login, filas.</td><td>Redis, DynamoDB</td></tr>
+            <tr><td>Colunar (wide-column)</td><td>Linhas com colunas flexíveis, espalhadas em vários servidores. Volumes enormes de escrita.</td><td>Cassandra, HBase</td></tr>
+            <tr><td>Grafo</td><td>Nós e as ligações entre eles. Redes sociais, recomendação, fraude.</td><td>Neo4j, Amazon Neptune</td></tr>
+            <tr><td>Séries temporais</td><td>Medidas com data e hora. Métricas, sensores, monitoramento.</td><td>InfluxDB, TimescaleDB</td></tr>
+            <tr><td>Vetorial</td><td>Vetores de números que representam significado. Busca semântica e IA.</td><td>Pinecone, Qdrant, pgvector</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Não é preciso escolher um só. É comum usar relacional para os dados principais, Redis como cache e um banco vetorial para a busca com IA.</p>
+    </section>
+
+    <!-- 1.11 -->
+    <section>
+      <h2><span class="n">1.11</span>Bancos vetoriais</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 360 165" role="img" aria-label="Espaço de vetores: cachorro, cão e gato ficam próximos; planilha e Excel ficam longe. A busca por filhote encontra cão e cachorro, os mais próximos.">
+          <g filter="url(#wob)">
+            <path class="thin" d="M20 145 H345 M20 145 V12"/>
+            <path class="dash" d="M140 46 L102 60 M140 46 L126 82"/>
+          </g>
+          <circle class="pt" cx="96" cy="62" r="5"/>
+          <circle class="pt" cx="122" cy="86" r="5"/>
+          <circle class="pt" cx="74" cy="100" r="5"/>
+          <circle class="pt" cx="268" cy="118" r="5"/>
+          <circle class="pt" cx="300" cy="96" r="5"/>
+          <circle class="pt-q" cx="142" cy="45" r="6"/>
+          <text class="t-cell" x="40" y="57">cachorro</text>
+          <text class="t-cell" x="130" y="100">cão</text>
+          <text class="t-cell" x="36" y="120">gato</text>
+          <text class="t-cell" x="232" y="138">planilha</text>
+          <text class="t-cell" x="308" y="92">Excel</text>
+          <text class="t-red" x="152" y="40">busca: "filhote"</text>
+          <text class="t-soft" x="200" y="70">perto = significado parecido</text>
+        </svg>
+      </div>
+      <ul class="dots">
+        <li>Um modelo de IA transforma texto, imagem ou áudio num <b>embedding</b>: uma lista de números (ex.: 1536) que representa o significado.</li>
+        <li>A busca acha os <b>vizinhos mais próximos</b>, medindo a distância por cosseno, euclidiana ou produto interno.</li>
+        <li>Índices <b>ANN</b> (aproximados), como HNSW e IVFFlat, trocam um pouco de precisão por muita velocidade em milhões de itens.</li>
+        <li><b>Usos:</b> busca por significado, <b>RAG</b> (o chatbot consulta seus documentos antes de responder), recomendação e achar duplicados.</li>
+      </ul>
+<pre class="sql">-- PostgreSQL + pgvector
+CREATE EXTENSION vector;
+CREATE TABLE docs (
+  id    SERIAL PRIMARY KEY,
+  texto TEXT,
+  emb   VECTOR(1536)
+);
+
+-- os 5 textos mais parecidos com a pergunta
+-- (&lt;=&gt; = distância de cosseno)
+SELECT texto FROM docs
+ORDER BY emb &lt;=&gt; '[0.12, -0.03, ...]'
+LIMIT 5;</pre>
+      <p class="note">Ferramentas: Pinecone, Qdrant, Weaviate, Milvus, Chroma e a extensão pgvector. O MySQL 9 ganhou o tipo VECTOR, mas a função de distância só vem no HeatWave, a versão em nuvem. O vetorial não substitui o relacional: o vetor acha o item parecido, e o relacional guarda os detalhes.</p>
     </section>
 
   </div>
@@ -873,6 +987,17 @@ COMMIT;      -- grava tudo
           </tbody>
         </table>
       </div>
+      <p class="sub">Atomicidade na prática</p>
+<pre class="sql">START TRANSACTION;
+UPDATE contas SET saldo = saldo - 100 WHERE id = 1;  -- ok
+UPDATE contas SET saldo = saldo + 100 WHERE id = 99; -- falhou
+ROLLBACK;  -- os R$ 100 voltam para a conta 1</pre>
+      <ul class="dots">
+        <li>Sem transação, a conta 1 perderia R$ 100 que não chegariam a lugar nenhum.</li>
+        <li>O InnoDB anota cada mudança no <b>undo log</b>. É com ele que o ROLLBACK desfaz tudo.</li>
+        <li><span class="red"><b>No MySQL, um erro não cancela a transação sozinho:</b></span> só o comando que falhou é desfeito. O app precisa mandar ROLLBACK.</li>
+        <li>Se a conexão cair ou o servidor reiniciar antes do COMMIT, aí sim o banco desfaz tudo sozinho.</li>
+      </ul>
       <ul class="dots" style="margin-top:10px">
         <li>No MySQL, transação funciona no motor <b>InnoDB</b> (o padrão).</li>
         <li>O <b>autocommit</b> vem ligado: fora de uma transação, cada comando é gravado na hora.</li>
