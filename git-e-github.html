@@ -256,6 +256,8 @@ table.plain td:first-child { font-weight: 400; color: var(--ink); }
   .grid > section.full { flex-basis: 100%; }
   .inner2 { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
   section { break-inside: avoid; }
+  section.split { break-inside: auto; }
+  section.split .inner2 > div, section.split .diagram { break-inside: avoid; }
   section h2 { font-size: 22px; margin-bottom: 6px; break-after: avoid; }
   .note { font-size: 11.5px; }
   .cmd, .cmd.wrap, td .cmd { white-space: normal; }
@@ -335,7 +337,7 @@ table.plain td:first-child { font-weight: 400; color: var(--ink); }
     </section>
 
     <!-- 1.3 -->
-    <section class="full">
+    <section class="full split">
       <h2><span class="n">1.3</span>As 4 áreas do Git</h2>
       <div class="diagram wide">
         <svg viewBox="0 0 820 262" role="img" aria-label="Working Directory para Staging Area com git add, Staging para Repositório local com git commit, Repositório local para Remoto com git push. Do remoto volta com git fetch e git pull.">
@@ -369,6 +371,68 @@ table.plain td:first-child { font-weight: 400; color: var(--ink); }
         </svg>
       </div>
       <p class="note">Dica: <span class="cmd">git status</span> mostra em qual área cada arquivo está. <span class="cmd">git restore --staged arq</span> tira um arquivo da staging.</p>
+
+      <div class="inner2" style="margin-top:14px">
+        <div>
+          <p class="sub" style="margin-top:0">O que cada comando faz</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Comando</th><th>O que faz</th><th>Mexe nos seus arquivos?</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cmd">git clone</span></td><td>Copia o repositório inteiro do GitHub, na primeira vez.</td><td>Cria a pasta</td></tr>
+                <tr><td><span class="cmd">git fetch</span></td><td><b>Só baixa</b> os commits novos do GitHub e atualiza o <b>origin/main</b>. Sua branch fica como estava.</td><td class="green"><b>Não</b></td></tr>
+                <tr><td><span class="cmd">git merge</span></td><td><b>Junta</b> outra branch na branch em que você está. Ex.: <span class="cmd">git merge origin/main</span> traz o que o fetch baixou.</td><td class="red"><b>Sim</b></td></tr>
+                <tr><td><span class="cmd">git pull</span></td><td><b>fetch + merge</b> num comando só.</td><td class="red"><b>Sim</b></td></tr>
+                <tr><td><span class="cmd">git push</span></td><td>Envia os seus commits para o GitHub.</td><td>Não, só o GitHub</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="dots" style="margin-top:10px">
+            <li><b>origin/main</b> é a cópia, no seu computador, de como a main estava no GitHub no último fetch. Ela não muda sozinha.</li>
+            <li><b>Por que usar fetch:</b> é seguro. Você vê o que chegou com <span class="cmd">git log main..origin/main</span> e só depois decide fazer o merge.</li>
+          </ul>
+        </div>
+        <div>
+          <p class="sub" style="margin-top:0">Os dois jeitos de um merge acontecer</p>
+          <div class="diagram">
+            <svg viewBox="0 0 400 265" role="img" aria-label="Fast-forward: a main só avança até o último commit da outra branch. Commit de merge: as duas branches andaram, e o merge cria um commit M com dois pais.">
+              <g filter="url(#wob)">
+                <path class="main" d="M20 48 L 240 48"/>
+                <path class="ar" d="M95 74 C 140 96, 200 96, 234 72" marker-end="url(#arr)"/>
+                <path class="main" d="M20 220 L 300 220"/>
+                <path class="br" d="M90 220 C 110 220, 110 172, 140 172 L 200 172 C 230 172, 240 220, 262 220"/>
+              </g>
+              <circle class="dot" cx="40" cy="48" r="8"/>
+              <circle class="dot" cx="90" cy="48" r="8"/>
+              <circle class="dot-f" cx="140" cy="48" r="7"/>
+              <circle class="dot-f" cx="190" cy="48" r="7"/>
+              <circle class="dot" cx="240" cy="48" r="8"/>
+              <text class="t-title" x="20" y="22">1. Fast-forward</text>
+              <text class="t-soft" x="20" y="78">main antes</text>
+              <text class="t-soft" x="240" y="28" text-anchor="middle">main depois</text>
+              <text class="t-soft" x="262" y="98">só avança,</text>
+              <text class="t-soft" x="262" y="114">sem commit novo</text>
+              <circle class="dot" cx="40" cy="220" r="8"/>
+              <circle class="dot" cx="90" cy="220" r="8"/>
+              <circle class="dot" cx="170" cy="220" r="8"/>
+              <circle class="dot-f" cx="150" cy="172" r="7"/>
+              <circle class="dot-f" cx="195" cy="172" r="7"/>
+              <circle class="dot" cx="262" cy="220" r="10"/>
+              <text class="t-strong" x="262" y="225" text-anchor="middle">M</text>
+              <text class="t-title" x="20" y="150">2. Commit de merge</text>
+              <text class="t-soft" x="20" y="248">main</text>
+              <text class="t-green" x="225" y="164">feature</text>
+              <text class="t-soft" x="280" y="240">M = commit com</text>
+              <text class="t-soft" x="280" y="256">dois "pais"</text>
+            </svg>
+          </div>
+          <ul class="dots">
+            <li><b>Fast-forward:</b> a main não mudou desde que a branch saiu dela. O Git só move a main para frente.</li>
+            <li><b>Commit de merge:</b> as duas andaram. O Git cria um commit novo que junta as duas histórias.</li>
+            <li>Se as duas mudaram <b>a mesma linha</b>, o merge para e pede ajuda: é um conflito (seção 1.12).</li>
+          </ul>
+        </div>
+      </div>
     </section>
 
     <!-- 1.4 -->
