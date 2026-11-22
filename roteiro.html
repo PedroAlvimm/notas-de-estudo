@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roteiro de IA · Pedro Alvim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@400;700&display=swap">
+<style>
+/* Layout: uma folha de caderno com 5 fases; cada vídeo é uma linha com caixinha para marcar */
+:root {
+  --desk: #e6ebf2; --paper: #fdfdfa; --ink: #2142a6; --ink-strong: #13205a; --ink-soft: #6b7bb0;
+  --red: #c0352c; --green: #1b7a49; --marker: rgba(255, 221, 64, .55); --paper-shadow: rgba(19, 32, 90, .14);
+  --font-hand: "Kalam", "Segoe Print", "Comic Sans MS", cursive;
+  --font-title: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+    --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+  --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--desk); color: var(--ink);
+  font-family: var(--font-hand); font-size: 17px; line-height: 1.45;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--ink-strong); }
+a:focus-visible, button:focus-visible { outline: 2px dashed var(--red); outline-offset: 3px; }
+.sheet {
+  max-width: 900px; margin: 0 auto; background: var(--paper); border-radius: 3px;
+  box-shadow: 0 1px 2px var(--paper-shadow), 0 12px 32px var(--paper-shadow);
+  padding: clamp(18px, 4vw, 44px); display: grid; gap: 26px;
+}
+.head { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+h1 {
+  margin: 0; font-family: var(--font-title); font-weight: 700; font-size: clamp(40px, 6.5vw, 60px);
+  line-height: 1.05; color: var(--ink-strong); text-decoration: underline; text-decoration-thickness: 2.5px;
+  text-underline-offset: 10px; text-wrap: balance;
+}
+.back { font-size: 15px; white-space: nowrap; }
+.lede { margin: -6px 0 0; color: var(--ink-soft); }
+
+/* progresso */
+.progress { display: grid; gap: 6px; }
+.progress .row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.progress .big { font-family: var(--font-title); font-weight: 700; font-size: 30px; color: var(--ink-strong); }
+.bar {
+  height: 16px; border: 2px solid var(--ink-strong);
+  border-radius: 255px 12px 225px 12px / 12px 225px 12px 255px; overflow: hidden;
+}
+.bar > span {
+  display: block; height: 100%; width: 0;
+  background: repeating-linear-gradient(45deg, var(--green) 0 3px, transparent 3px 7px);
+  transition: width .3s ease;
+}
+@media (prefers-reduced-motion: reduce) { .bar > span { transition: none; } }
+.reset {
+  font-family: var(--font-hand); font-size: 14px; color: var(--ink-soft); background: none;
+  border: 1.5px dashed var(--ink-soft); border-radius: 12px 4px 12px 5px; padding: 2px 10px; cursor: pointer;
+}
+.reset.armed { color: var(--red); border-color: var(--red); }
+
+/* fases */
+section { min-width: 0; }
+section h2 {
+  margin: 0 0 4px; font-family: var(--font-title); font-weight: 700; font-size: 31px; line-height: 1.1;
+  color: var(--ink-strong); border-bottom: 2px solid var(--ink-strong);
+  border-radius: 0 0 60% 8% / 0 0 5px 3px; padding-bottom: 2px;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap;
+}
+section h2 .count { font-family: var(--font-hand); font-size: 15px; font-weight: 700; color: var(--ink-soft); }
+.phase-info { margin: 4px 0 10px; color: var(--ink-soft); font-size: 15px; }
+ol.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: n; }
+.item { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; }
+.item input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.item .box {
+  width: 26px; height: 26px; margin-top: 2px; border: 2px solid var(--ink-strong); cursor: pointer;
+  border-radius: 6px 3px 7px 4px; display: grid; place-items: center;
+  font-weight: 700; font-size: 20px; color: var(--green); line-height: 1;
+}
+.item input:checked + .box::after { content: "\2713"; }
+.item input:focus-visible + .box { outline: 2px dashed var(--red); outline-offset: 2px; }
+.item .body { min-width: 0; }
+.item .title { font-weight: 700; }
+.item .meta { display: block; font-size: 14px; color: var(--ink-soft); }
+.item .why { margin: 2px 0 0; font-size: 15px; }
+.item.done .title a { color: var(--ink-soft); text-decoration-thickness: 1px; }
+.item.done .why { color: var(--ink-soft); }
+.tag {
+  display: inline-block; font-size: 12.5px; font-weight: 700; border: 1.5px solid currentColor;
+  border-radius: 10px 4px 10px 4px; padding: 0 6px; margin-left: 4px; vertical-align: 1px;
+}
+.tag.pt { color: var(--green); }
+.tag.code { color: var(--red); }
+
+/* caixas finais */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 36px; }
+.cols > * { min-width: 0; }
+ul.dots, ul.checks { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+ul.dots li { position: relative; padding-left: 22px; }
+ul.dots li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-strong); }
+ul.checks li { position: relative; padding-left: 28px; }
+ul.checks li::before { content: "\2713"; position: absolute; left: 2px; top: -2px; font-weight: 700; font-size: 22px; color: var(--green); }
+b { color: var(--ink-strong); }
+.note { color: var(--ink-soft); font-size: 15px; margin: 8px 0 0; }
+.foot {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px;
+  border-top: 1.5px solid var(--ink-strong); padding-top: 10px; font-size: 15px; color: var(--ink-soft);
+}
+.sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
+@media (max-width: 720px) {
+  .cols, .head { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="head">
+    <h1>Roteiro: do zero aos Transformers</h1>
+    <a class="back" href="index.html">← todas as notas</a>
+  </header>
+  <p class="lede">27 vídeos e playlists gratuitos, em ordem. Marque cada um quando terminar: as marcações ficam salvas neste navegador.</p>
+
+  <div class="progress" aria-live="polite">
+    <div class="row">
+      <span class="big" id="total-label">0 de 0 concluídos</span>
+      <button class="reset" id="reset" type="button">Limpar marcações</button>
+    </div>
+    <div class="bar" role="progressbar" aria-label="Progresso geral" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="total-bar"><span></span></div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="cols">
+    <section>
+      <h2>Três hábitos que fazem diferença</h2>
+      <ul class="checks">
+        <li>Depois de cada vídeo, explique o assunto em 3 frases, sem olhar.</li>
+        <li>Nos vídeos marcados com <span class="tag code">código</span>, nunca só assista: digite o código e rode.</li>
+        <li>Ao fim de cada fase, faça uma folha de notas, como as deste repositório. Escrever é o melhor teste.</li>
+      </ul>
+      <p class="note">Tempo total: de 3 a 4 meses partindo do zero, ou uns 2 meses se você já programa em Python. Legendas: em vídeos em inglês, use Configurações → Legendas → Traduzir automaticamente → Português.</p>
+    </section>
+    <section>
+      <h2>Por que esses vídeos?</h2>
+      <ul class="dots">
+        <li><b>Curso em Vídeo:</b> o curso de Python gratuito mais completo em português, com exercícios.</li>
+        <li><b>3Blue1Brown:</b> a melhor intuição visual de álgebra linear e redes neurais. Tem legendas em português.</li>
+        <li><b>StatQuest:</b> explica cada conceito sozinho, devagar e sem pular passos.</li>
+        <li><b>Karpathy:</b> ex-diretor de IA da Tesla e cofundador da OpenAI. Constrói tudo do zero, ao vivo, em código.</li>
+        <li><b>Stanford CME295:</b> o curso da aula que virou as <a href="transformers.html">notas de Transformers</a>.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section>
+    <h2>Alternativas, se um estilo não funcionar para você</h2>
+    <ul class="dots">
+      <li><b>Python em inglês:</b> <a href="https://www.youtube.com/watch?v=nLRL_NcnK-4" target="_blank" rel="noopener">Harvard CS50P</a>, mais acadêmico e com listas de exercícios.</li>
+      <li><b>Mais prático que teórico:</b> o curso gratuito <a href="https://course.fast.ai/" target="_blank" rel="noopener">fast.ai – Practical Deep Learning</a>, que começa treinando modelos e explica a teoria depois.</li>
+      <li><b>Só Stanford:</b> ENGR108 (álgebra linear) → CS229 (machine learning) → CS224N (linguagem) → CME295, todos no canal <a href="https://www.youtube.com/@stanfordonline/playlists" target="_blank" rel="noopener">Stanford Online</a>. Mais longo e mais matemático.</li>
+      <li><b>Livro com código:</b> <a href="https://d2l.ai/" target="_blank" rel="noopener">Dive into Deep Learning</a>, gratuito e com exemplos que rodam.</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · Roteiro de IA</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var YT = "https://www.youtube.com/";
+  var PHASES = [
+    { name: "Fase 1: Python", time: "2 a 4 semanas · pule se já programa", items: [
+      { id: "cev-m1", t: "Curso de Python 3 – Mundo 1: Fundamentos", u: YT + "playlist?list=PLHz_AreHm4dlKP6QQCekuIPky1CiwmdI6", m: "Curso em Vídeo · playlist", pt: 1, why: "Variáveis, tipos, condições. Faça os exercícios de cada aula." },
+      { id: "cev-m2", t: "Curso de Python 3 – Mundo 2: Estruturas de Controle", u: YT + "playlist?list=PLHz_AreHm4dk_nZHmxxf_J0WRAqy5Czye", m: "Curso em Vídeo · playlist", pt: 1, why: "if, for e while: os laços." },
+      { id: "cev-m3", t: "Curso de Python 3 – Mundo 3: Estruturas Compostas", u: YT + "playlist?list=PLHz_AreHm4dksnH2jVTIVNviIMBVYyFnH", m: "Curso em Vídeo · playlist", pt: 1, why: "Listas, dicionários e funções. É a parte que mais aparece em IA." },
+      { id: "numpy", t: "Python NumPy Tutorial for Beginners", u: YT + "watch?v=QUT1VHiLmmI", m: "freeCodeCamp (Keith Galli) · 58 min", code: 1, why: "Arrays, shape e operações com matrizes." }
+    ]},
+    { name: "Fase 2: Matemática pela intuição", time: "2 a 3 semanas", items: [
+      { id: "la1", t: "Vectors · Essence of Linear Algebra, cap. 1", u: YT + "watch?v=fNk_zzaMoSs", m: "3Blue1Brown · ~10 min", why: "O que é um vetor." },
+      { id: "la2", t: "Linear combinations, span, and basis vectors · cap. 2", u: YT + "watch?v=k7RM-ot2NWY", m: "3Blue1Brown · ~10 min", why: "Combinar vetores." },
+      { id: "la3", t: "Linear transformations and matrices · cap. 3", u: YT + "watch?v=kYB8IZa5AuE", m: "3Blue1Brown · ~11 min", why: "Matriz como uma transformação do espaço." },
+      { id: "la4", t: "Matrix multiplication as composition · cap. 4", u: YT + "watch?v=XkY2DOUCWMU", m: "3Blue1Brown · ~10 min", why: "Multiplicação de matrizes, base de toda a atenção." },
+      { id: "la9", t: "Dot products and duality · cap. 9", u: YT + "watch?v=LyGKycYT2v0", m: "3Blue1Brown · ~14 min", why: "Produto escalar: é como a query mede a semelhança com a key." },
+      { id: "sq-gd", t: "Gradient Descent, Step-by-Step", u: YT + "watch?v=sDv4f4s2SB8", m: "StatQuest · 24 min", why: "Como um modelo aprende ajustando os pesos." },
+      { id: "sq-sm", t: "Neural Networks Part 5: ArgMax and SoftMax", u: YT + "watch?v=KpKog-L9veg", m: "StatQuest · 14 min", why: "Transformar números em probabilidades." },
+      { id: "sq-ce", t: "Neural Networks Part 6: Cross Entropy", u: YT + "watch?v=6ArSys5qHAU", m: "StatQuest · 10 min", why: "A função de perda usada para treinar LLMs." }
+    ]},
+    { name: "Fase 3: Redes neurais", time: "3 a 4 semanas", items: [
+      { id: "nn1", t: "But what is a neural network? · cap. 1", u: YT + "watch?v=aircAruvnKk", m: "3Blue1Brown · ~19 min", why: "Neurônios, camadas e pesos." },
+      { id: "nn2", t: "Gradient descent, how neural networks learn · cap. 2", u: YT + "watch?v=IHZwWFHWa-w", m: "3Blue1Brown · ~21 min", why: "O treino visto de dentro da rede." },
+      { id: "nn3", t: "Backpropagation, intuitively · cap. 3", u: YT + "watch?v=Ilg3gGewQ5U", m: "3Blue1Brown · ~13 min", why: "Como o erro volta pela rede." },
+      { id: "nn4", t: "Backpropagation calculus · cap. 4", u: YT + "watch?v=tIeHLnjs5U8", m: "3Blue1Brown · ~10 min", why: "A conta por trás. Pode assistir sem decorar." },
+      { id: "micrograd", t: "Building micrograd (intro a redes neurais e backpropagation)", u: YT + "watch?v=VMj-3S1tku0", m: "Andrej Karpathy · ~2h30", code: 1, why: "Você constrói o backpropagation do zero. É aqui que tudo se conecta." },
+      { id: "makemore1", t: "Building makemore, parte 1 (introdução a modelos de linguagem)", u: YT + "watch?v=PaCmpygFfXo", m: "Andrej Karpathy · ~2h", code: 1, why: "Um modelo que gera nomes, letra por letra." },
+      { id: "makemore2", t: "makemore, partes 2 a 5", u: YT + "playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ", m: "Andrej Karpathy · playlist Neural Networks: Zero to Hero", code: 1, why: "MLP, ativações, BatchNorm e uma rede mais funda. Siga a ordem da playlist." }
+    ]},
+    { name: "Fase 4: Transformers", time: "2 a 3 semanas", items: [
+      { id: "nn5", t: "Transformers, the tech behind LLMs · cap. 5", u: YT + "watch?v=wjZofJX0v4M", m: "3Blue1Brown · ~27 min", why: "Visão geral visual do GPT." },
+      { id: "nn6", t: "Attention in transformers, step-by-step · cap. 6", u: YT + "watch?v=eMlx5fFNoYc", m: "3Blue1Brown · ~26 min", why: "Query, key e value com desenhos." },
+      { id: "nn7", t: "How might LLMs store facts · cap. 7", u: YT + "watch?v=9-Jl0dxWQs8", m: "3Blue1Brown · ~23 min", why: "O papel do feed-forward." },
+      { id: "cme1", t: "Stanford CME295, aula 1: Transformers", u: YT + "watch?v=114i2Kz-LZA", m: "Stanford Online · 1h44", why: "A aula das suas notas. Releia as notas de Transformers junto." },
+      { id: "gpt", t: "Let's build GPT: from scratch, in code, spelled out", u: YT + "watch?v=kCc8FmEb1nY", m: "Andrej Karpathy · ~2h", code: 1, why: "Você implementa a atenção da seção 2.5 das notas." },
+      { id: "tokenizer", t: "Let's build the GPT Tokenizer", u: YT + "watch?v=zduSFxRajkE", m: "Andrej Karpathy · ~2h15", code: 1, why: "O BPE da seção 1.4 das notas, por dentro." }
+    ]},
+    { name: "Fase 5: LLMs modernos", time: "no seu ritmo", items: [
+      { id: "cme-all", t: "Stanford CME295, aulas 2 a 9 (Autumn 2026)", u: YT + "playlist?list=PLakGfbKCei80", m: "Stanford Online · playlist em andamento", why: "Treino, uso de LLMs e agentes. Se faltar alguma aula, a edição completa de 2025 está em youtube.com/playlist?list=PLoROMvodv4rOCXd21gf0CF4xr35yINeOy." },
+      { id: "deepdive", t: "Deep Dive into LLMs like ChatGPT", u: YT + "watch?v=7xTGNNLPyMI", m: "Andrej Karpathy · ~3h30", why: "Como os chatbots são treinados hoje, do pré-treino ao RLHF." }
+    ]}
+  ];
+
+  var KEY = "roteiro-ia-v1";
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  var root = document.getElementById("phases");
+  var html = "", n = 0;
+  PHASES.forEach(function (p, pi) {
+    html += '<section data-phase="' + pi + '"><h2><span>' + p.name + '</span><span class="count" id="count-' + pi + '"></span></h2>';
+    html += '<p class="phase-info">' + p.time + '</p><ol class="items">';
+    p.items.forEach(function (it) {
+      n++;
+      var cid = "c-" + it.id;
+      html += '<li class="item" id="li-' + it.id + '">' +
+        '<input type="checkbox" id="' + cid + '" data-id="' + it.id + '">' +
+        '<label class="box" for="' + cid + '" title="Marcar como concluído"><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Concluído: ' + it.t + '</span></label>' +
+        '<div class="body"><span class="title">' + n + '. <a href="' + it.u + '" target="_blank" rel="noopener">' + it.t + '</a></span>' +
+        (it.pt ? '<span class="tag pt">PT</span>' : '') + (it.code ? '<span class="tag code">código</span>' : '') +
+        '<span class="meta">' + it.m + '</span><p class="why">' + it.why + '</p></div></li>';
+    });
+    html += '</ol></section>';
+  });
+  root.innerHTML = html;
+  root.style.display = "grid"; root.style.gap = "26px";
+
+  function update() {
+    var done = 0, total = 0;
+    PHASES.forEach(function (p, pi) {
+      var d = 0;
+      p.items.forEach(function (it) {
+        var on = !!state[it.id];
+        document.getElementById("c-" + it.id).checked = on;
+        document.getElementById("li-" + it.id).classList.toggle("done", on);
+        if (on) d++;
+      });
+      document.getElementById("count-" + pi).textContent = d + "/" + p.items.length;
+      done += d; total += p.items.length;
+    });
+    var pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById("total-label").textContent = done + " de " + total + " concluídos (" + pct + "%)";
+    var bar = document.getElementById("total-bar");
+    bar.setAttribute("aria-valuenow", pct);
+    bar.firstElementChild.style.width = pct + "%";
+  }
+
+  root.addEventListener("change", function (e) {
+    var id = e.target && e.target.getAttribute("data-id");
+    if (!id) return;
+    if (e.target.checked) state[id] = true; else delete state[id];
+    save(); update();
+  });
+
+  var reset = document.getElementById("reset"), timer = null;
+  reset.addEventListener("click", function () {
+    if (!reset.classList.contains("armed")) {
+      reset.classList.add("armed"); reset.textContent = "Clique de novo para limpar tudo";
+      timer = setTimeout(function () { reset.classList.remove("armed"); reset.textContent = "Limpar marcações"; }, 4000);
+      return;
+    }
+    clearTimeout(timer); state = {}; save(); update();
+    reset.classList.remove("armed"); reset.textContent = "Marcações limpas";
+    setTimeout(function () { reset.textContent = "Limpar marcações"; }, 2500);
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
