@@ -374,14 +374,14 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
     <section class="full">
       <h2><span class="n">0.1</span>As três partes do PontoAtivo</h2>
       <div class="stats">
-        <div class="stat"><b>3.100</b><span>locais no mapa (IDE-DF, Ibram, curadoria)</span></div>
+        <div class="stat"><b>3.898</b><span>locais no mapa, com 798 parquinhos</span></div>
         <div class="stat"><b>25</b><span>documentos oficiais na base do assistente</span></div>
-        <div class="stat"><b>24</b><span>módulos Python em <span class="mono">src/pontoativo_rag/</span></span></div>
-        <div class="stat"><b>20</b><span>arquivos de testes, rodando no GitHub Actions</span></div>
+        <div class="stat"><b>22</b><span>módulos Python em <span class="mono">src/pontoativo_rag/</span></span></div>
+        <div class="stat"><b>19</b><span>arquivos de testes, rodando no GitHub Actions</span></div>
       </div>
       <div class="inner2">
         <ul class="dots">
-          <li><b>Mapa:</b> PECs, COPs, quadras, campos, parques, clubes e paradesporto, com filtros. Feito com Leaflet e agrupamento de pinos.</li>
+          <li><b>Mapa:</b> PECs, COPs, quadras, campos, praças, parques, parquinhos, clubes e paradesporto, com filtros. Feito com Leaflet e agrupamento de pinos.</li>
           <li><b>Encontros:</b> agenda em que a pessoa marca uma atividade (dupla, trio ou grupo), escolhe o nível e outras confirmam vaga.</li>
         </ul>
         <ul class="dots">
@@ -394,7 +394,7 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
     <section class="full">
       <h2><span class="n">0.2</span>Como uma pergunta vira resposta</h2>
       <div class="diagram wide">
-        <svg viewBox="0 0 860 250" role="img" aria-label="Pipeline do RAG: fontes, limpeza, chunks de 450 palavras, segmentos de 120, embeddings E5 e ChromaDB. A pergunta vira vetor, busca no Chroma, e se a distância passar de 0,45 o sistema se abstém; senão o Gemma responde com fonte por frase.">
+        <svg viewBox="0 0 860 250" role="img" aria-label="Pipeline do RAG: fontes, limpeza, chunks de 450 palavras, segmentos de 120, embeddings E5 e ChromaDB. A pergunta vira vetor, busca no Chroma, e se a distância passar de 0,12 o sistema se abstém; senão o Gemma responde com fonte por frase.">
           <text class="t-soft" x="10" y="18">ingestão (uma vez)</text>
           <g filter="url(#wob)">
             <rect class="box" x="10" y="30" width="110" height="52" rx="8"/>
@@ -436,7 +436,7 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
           <text class="t-soft" x="65" y="210" text-anchor="middle">→ vetor E5</text>
           <text class="t-strong" x="365" y="191" text-anchor="middle">busca + reranking</text>
           <text class="t-soft" x="365" y="210" text-anchor="middle">top 4 trechos</text>
-          <text class="t-red" x="525" y="205" text-anchor="middle">dist. &gt; 0,45</text>
+          <text class="t-red" x="525" y="205" text-anchor="middle">dist. &gt; 0,12</text>
           <text class="t-soft" x="525" y="223" text-anchor="middle">abstém-se</text>
           <text class="t-strong" x="730" y="191" text-anchor="middle">Gemma 4 12B (Ollama)</text>
           <text class="t-soft" x="730" y="210" text-anchor="middle">JSON com a fonte de cada frase</text>
@@ -476,9 +476,9 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
       <h2><span class="n">0.5</span>Linha do tempo</h2>
       <ol class="steps">
         <li><span class="date">até 05/11</span>Fontes curadas e o esqueleto do RAG. <i>(Semana 1)</i></li>
-        <li><span class="date">10 a 13/11</span>Qualidade do RAG, curadoria do mapa e o teste com e sem RAG. <i>(Semana 2)</i></li>
-        <li><span class="date">16 e 17/11</span>Tudo num projeto só: E5, encontros, Geoportal e CI. <i>(Semana 3)</i></li>
-        <li><span class="date">próxima</span>Ver "Próximos passos" no fim da semana 3.</li>
+        <li><span class="date">10 a 14/11</span>Qualidade do RAG, teste com e sem RAG, encontros e mapa com 3.100 locais. <i>(Semana 2)</i></li>
+        <li><span class="date">16 a 19/11</span>E5 com limiar 0,12, projeto organizado e parquinhos. <i>(Semana 3)</i></li>
+        <li><span class="date">esta semana</span>Agente multimodal: o assistente lê cartazes (imagem + texto). <i>(Semana 4, em andamento)</i></li>
       </ol>
     </section>
 
@@ -504,7 +504,7 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
       <h2><span class="n">1.1</span>Curadoria das fontes</h2>
       <p>Antes de qualquer código: uma planilha com cada fonte, a URL, o arquivo local, as notas e as limitações.</p>
       <ul class="dots">
-        <li><b>24 fontes</b> no catálogo da fase de dados: 15 oficiais (governo do DF) e 9 institucionais (CPB e outras entidades).</li>
+        <li>Meta: pelo menos <b>20 fontes reais e distintas</b>. Hoje são 25, de órgãos do governo do DF e de entidades como o CPB.</li>
         <li>Cada uma recebe um status: só entram as <b>Aprovadas</b> ou <b>Aprovadas com ressalvas</b>.</li>
         <li>Um script baixa de novo todas as cópias locais, para dar para refazer tudo.</li>
       </ul>
@@ -588,21 +588,21 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
 <!-- ===================== SEMANA 2 ===================== -->
 <article class="sheet">
   <header class="head">
-    <h1>Semana 2: qualidade e curadoria do mapa</h1>
-    <div class="page-tag">Semana 2 · 10 a 13/11</div>
+    <h1>Semana 2: qualidade, encontros e mapa maior</h1>
+    <div class="page-tag">Semana 2 · 10 a 14/11</div>
   </header>
-  <p class="lede">O RAG ficou mais esperto para buscar e mais honesto para dizer "não sei". O mapa ganhou fontes novas, cada informação com o seu nível de confiança.</p>
+  <p class="lede">A semana mais cheia: o RAG passou a buscar melhor e a dizer "não sei", ganhou o teste com e sem RAG, foi ligado ao mapa, e o site ganhou encontros, contas e quase o dobro de locais.</p>
 
   <div class="grid">
 
     <section>
-      <h2><span class="n">2.1</span>Busca melhor</h2>
+      <h2><span class="n">2.1</span>Busca melhor <span class="date">10/11</span></h2>
       <ul class="dots">
-        <li><b>Reranking híbrido:</b> a ordem final mistura distância vetorial, palavras da pergunta que aparecem no trecho e a região administrativa.</li>
-        <li><b>Duas janelas:</b> primeiro busca 50 segmentos por chunk pedido. Só se não achar palavra forte, olha até 200.</li>
+        <li><b>Reranking híbrido:</b> a ordem final mistura distância vetorial, palavras da pergunta, nome da seção do trecho e região administrativa.</li>
+        <li><b>Duas janelas:</b> primeiro 50 segmentos por chunk pedido. Só se não achar palavra forte, olha até 200.</li>
         <li><b>Filtros</b> por região, tipo de documento, fonte e atualidade, sem esconder trecho que não tem o metadado.</li>
       </ul>
-      <p class="why"><b>Por quê:</b> só vetor erra nomes próprios ("COP Setor O"). As palavras ajudam, e o modo <span class="mono">--reranker</span> mede o ganho.</p>
+      <p class="why"><b>Por quê:</b> só o vetor erra nomes próprios ("COP Setor O"). As palavras ajudam, e o modo <span class="mono">--reranker</span> mede o ganho.</p>
     </section>
 
     <section>
@@ -614,35 +614,32 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
         <span class="pill">antiga</span>
         <span class="pill">desconhecida</span>
       </div>
-      <p>Horários e vagas vencem rápido; leis duram mais. Fonte antiga não é apagada, só vai para a fila de revisão.</p>
-      <p class="note">Nas 24 fontes: 5 atuais, 7 em revisão, 7 antigas, 5 sem data.</p>
+      <p>Horários e vagas envelhecem mais rápido que leis. Fonte antiga não é apagada: o status é um alerta para revisão.</p>
+      <p class="note">Relatório de 10/11, com 24 fontes: 15 oficiais e 9 institucionais; 5 atuais, 7 em revisão, 7 antigas e 5 sem data. Em 12/11 entrou a 25ª (guia dos espaços de lazer, da UnB).</p>
     </section>
 
     <section>
-      <h2><span class="n">2.3</span>Limpeza do texto</h2>
-      <p>Cada regra corrige um defeito medido na base:</p>
+      <h2><span class="n">2.3</span>Fora do escopo e termos impróprios <span class="date">10 e 11/11</span></h2>
       <ul class="dots">
-        <li>cabeçalhos e rodapés repetidos nas páginas do PDF;</li>
-        <li>linhas de sumário com pontilhado;</li>
-        <li>da lista nacional de clubes do CPB, ficam só os do DF;</li>
-        <li>palavras grudadas num dos PDFs dos COPs;</li>
-        <li>trechos idênticos vindos de fontes diferentes.</li>
+        <li>Atividade que a base não cobre não cai numa resposta genérica; nomes populares de lutas são reconhecidos; pedidos de lugares não esportivos são bloqueados.</li>
+        <li>Termos impróprios são barrados no chat <b>antes</b> do modelo, e também no apelido e no usuário do cadastro.</li>
       </ul>
+      <p class="why"><b>Por que antes do modelo:</b> a checagem é fixa (sem IA) e pega acento trocado, letra repetida e número no lugar de letra. Se fosse pelo modelo, ele reescreveria a pergunta e descartaria só a parte imprópria.</p>
     </section>
 
     <section>
-      <h2><span class="n">2.4</span>Fora do escopo</h2>
-      <p>Commits de 10/11 para o assistente não "forçar" uma resposta:</p>
+      <h2><span class="n">2.4</span>Resposta com a fonte de cada frase <span class="date">11/11</span></h2>
+      <p>O Ollama passou a responder em <b>JSON validado por um esquema</b>: cada frase traz as fontes que o próprio modelo escolheu, e só valem identificadores que estavam no contexto.</p>
       <ul class="dots">
-        <li>atividade que a base não cobre não cai numa resposta genérica;</li>
-        <li>nomes populares de lutas são reconhecidos;</li>
-        <li>pedidos de lugares que não são esportivos são bloqueados.</li>
+        <li>Se a resposta não vem toda citada, tenta de novo (até 3 chamadas). Se falhar, mostra só os trechos encontrados.</li>
+        <li><span class="date">13/11</span>4 trechos por pergunta em vez de 5 e frases curtas no esquema: <b>63 s</b> por resposta (eram 76), sem perder recall. No site, as fontes viram números sobrescritos.</li>
       </ul>
+      <p class="why"><b>Por quê:</b> antes a fonte era associada por semelhança de palavras, o que podia citar o trecho errado.</p>
     </section>
 
     <section class="full">
-      <h2><span class="n">2.5</span>O teste que justifica o projeto: o mesmo LLM com e sem RAG</h2>
-      <p>11/11, <span class="mono">llama3.2:3b</span>, 15 perguntas que a base responde e 5 que não responde. Respostas lidas uma a uma.</p>
+      <h2><span class="n">2.5</span>O teste que justifica o projeto: o mesmo LLM com e sem RAG <span class="date">11/11</span></h2>
+      <p>Modelo <span class="mono">llama3.2:3b</span>, 15 perguntas que a base responde e 5 que não responde. Respostas lidas uma a uma.</p>
       <div class="inner2">
         <div class="table-wrap">
           <table>
@@ -663,33 +660,64 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
     </section>
 
     <section>
-      <h2><span class="n">2.6</span>Novo gerador: Gemma 4 12B</h2>
-      <p>Na avaliação de 13/11 o gerador já era o <span class="mono">gemma4:12b</span>, com resposta em JSON (a fonte de cada frase) e até 3 tentativas.</p>
+      <h2><span class="n">2.6</span>Qual Gemma usar <span class="date">12/11</span></h2>
       <ul class="dots">
-        <li>Recall médio dos trechos certos: <b>0,96</b>.</li>
-        <li>Pelo menos uma fonte certa citada: <b>100%</b>.</li>
-        <li>Custo: ~50 a 77 s por resposta no notebook.</li>
+        <li>As primeiras avaliações (05/11) usavam o Llama 3.2 3B. Depois o gerador passou a ser o <b>Gemma 4</b>.</li>
+        <li><span class="mono">gemma4:26b</span> no computador pessoal; <span class="mono">gemma4:12b</span> no Mac M4 de 24 GB, que tem menos memória de GPU. As evidências de 12 e 13/11 são do 12B.</li>
+        <li>Em 17/11 o 12B virou o padrão do projeto.</li>
+      </ul>
+      <p class="why"><b>Regra:</b> trocar de modelo só vale depois de passar de novo no <b>portão de qualidade</b> (recall ≥ 0,90, ≥ 95% das fontes certas, nenhuma falsa abstenção ou afirmação sem suporte) e na revisão humana.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">2.7</span>Limpeza do texto <span class="date">12/11</span></h2>
+      <p>Cada regra corrige um defeito medido na base:</p>
+      <ul class="dots">
+        <li>cabeçalhos e rodapés repetidos, sumários pontilhados;</li>
+        <li>da lista nacional de clubes do CPB, ficam só os do DF;</li>
+        <li>palavras e títulos grudados em dois PDFs dos COPs;</li>
+        <li>trechos idênticos vindos de fontes diferentes.</li>
+      </ul>
+      <p>Títulos reconhecidos por tipo de fonte: trechos sem seção caíram de <b>39% para 5%</b>.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">2.8</span>Encontros e contas <span class="date">11 a 14/11</span></h2>
+      <ul class="dots">
+        <li>Agenda compartilhada: dupla, trio ou grupo (4 a 20 pessoas), nível e horário de Brasília. Os locais com encontro ganham pino destacado.</li>
+        <li>A vaga é confirmada de forma <b>atômica</b>: duas pessoas clicando juntas não ficam com a mesma vaga.</li>
+        <li>Contas só para maiores de 18 (faixa autodeclarada), com esportes e região preferidos.</li>
+        <li>SQLite, senha com <b>scrypt</b> e sessão em cookie HttpOnly. O servidor só escuta no próprio computador.</li>
+        <li><span class="date">14/11</span>Site separado em telas: Início, Mapa, Encontros e Dúvidas.</li>
       </ul>
     </section>
 
     <section>
-      <h2><span class="n">2.7</span>Curadoria do mapa: cada dado com sua confiança</h2>
+      <h2><span class="n">2.9</span>Curadoria do mapa: cada dado com sua confiança <span class="date">10 e 12/11</span></h2>
       <p>A confiança é <b>por atributo</b>, não por local: o endereço pode ser oficial e o banheiro, desconhecido.</p>
       <div class="flow">
         <span class="pill hi">oficial</span><span class="pill">organizacao</span><span class="pill">colaborativo</span><span class="pill">campo</span><span class="pill">divergente</span><span class="pill">desconhecido</span>
       </div>
       <ul class="dots">
-        <li>1.748 → <b>1.752</b> locais; erros de validação 53 → <b>0</b>.</li>
-        <li>12 parques localizados pelos polígonos oficiais do Ibram.</li>
-        <li>Novos: paradesporto (CETEFE, CPB) e 4 clubes privados confirmados no site oficial.</li>
+        <li>10/11: 1.748 → 1.752 locais; erros de validação 53 → <b>0</b>; 12 parques pelos polígonos do Ibram; paradesporto e 4 clubes privados.</li>
+        <li>12/11: campos, quadras e praças da camada oficial "Espaços comunitários" da IDE-DF: <b>1.752 → 3.100</b> locais.</li>
         <li>PECs: 403 no cadastro aberto, contra "mais de mil" segundo a Novacap. Escrevi um pedido pela LAI em vez de chutar.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">2.10</span>Testes no GitHub <span class="date">11/11</span></h2>
+      <ul class="dots">
+        <li>A cada envio roda o <b>pytest</b>, sem os testes que precisam do Ollama ou do modelo de embeddings.</li>
+        <li>Instala o PyTorch <b>só de CPU</b>, bem menor que o com CUDA.</li>
+        <li>Confere a sintaxe dos scripts do site e se o catálogo dos encontros está em dia com o mapa.</li>
       </ul>
     </section>
 
     <section class="full">
       <div class="alert">
         <h3>A lacuna que ficou à vista</h3>
-        <p>Em 8 dos 9 atributos de acessibilidade (rampa, banheiro, vaga, piso tátil…), <b>nenhum</b> dos 1.752 locais tem evidência. Não existe fonte oficial com isso. O projeto mostra "não informado" em vez de esconder, e criou um formulário de vistoria comunitária que só publica depois de moderação.</p>
+        <p>Em 8 dos 9 atributos de acessibilidade (rampa, banheiro, vaga, piso tátil…), <b>nenhum</b> local tem evidência, porque não existe fonte oficial com isso. O projeto mostra "não informado" em vez de esconder, e criou um formulário de vistoria comunitária que só publica depois de moderação.</p>
       </div>
     </section>
 
@@ -704,86 +732,270 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
 <!-- ===================== SEMANA 3 ===================== -->
 <article class="sheet">
   <header class="head">
-    <h1>Semana 3: tudo num projeto só</h1>
-    <div class="page-tag">Semana 3 · 16 e 17/11</div>
+    <h1>Semana 3: E5, projeto organizado e parquinhos</h1>
+    <div class="page-tag">Semana 3 · 16 a 19/11</div>
   </header>
-  <p class="lede">O RAG, o mapa da curadoria e a agenda de encontros viraram um só projeto, com um servidor local (<span class="mono">python -m pontoativo_rag.web</span>, porta 8766), um modelo de embeddings novo e testes automáticos no GitHub.</p>
+  <p class="lede">Troca do modelo de embeddings com nova calibração, um repositório mais arrumado e 798 parquinhos no mapa.</p>
 
   <div class="grid">
 
     <section>
-      <h2><span class="n">3.1</span>Troca do embedding: MiniLM → E5-base</h2>
-      <ul class="dots">
-        <li>Novo modelo: <span class="mono">intfloat/multilingual-e5-base</span>.</li>
-        <li>O E5 foi treinado para busca e espera um prefixo: <span class="cmd">query:</span> na pergunta e <span class="cmd">passage:</span> nos documentos. Sem isso a busca piora.</li>
-        <li>Coleção nova no Chroma: <span class="mono">pontoativo_e5_base_v1</span>.</li>
-      </ul>
-      <p class="why"><b>Por que coleção nova:</b> vetores de modelos diferentes vivem em "espaços" diferentes e não podem ser comparados entre si.</p>
-      <p class="note">Pendência: o limiar 0,45 foi calibrado com o MiniLM e precisa ser medido de novo com o E5.</p>
-    </section>
-
-    <section>
-      <h2><span class="n">3.2</span>Encontros e contas</h2>
-      <ul class="dots">
-        <li>Agenda compartilhada: nível (iniciante a avançado) e formato (dupla, trio ou grupo), no horário de Brasília.</li>
-        <li>A vaga é confirmada de forma <b>atômica</b>: duas pessoas clicando juntas não ficam com a mesma vaga.</li>
-        <li>Contas só de adultos (idade autodeclarada) no piloto.</li>
-        <li>Os encontros usam um catálogo de locais tirado do mapa por um script. O CI confere se os dois estão em dia.</li>
-      </ul>
-    </section>
-
-    <section>
-      <h2><span class="n">3.3</span>Moderação antes do modelo</h2>
-      <p>Uma checagem fixa (sem IA) procura termos impróprios, inclusive com acento trocado, letra repetida ou número no lugar de letra.</p>
-      <p class="why"><b>Por quê:</b> o classificador reescrevia a pergunta e jogava fora a parte imprópria ("campo de futebol e sexo" virava "campo de futebol"). A lista compara palavras inteiras para não bloquear "sexta" ou "computador".</p>
-    </section>
-
-    <section>
-      <h2><span class="n">3.4</span>Barra do mapa com modelo menor</h2>
-      <p>A barra só <b>classifica</b> a pergunta, então pode usar um modelo menor e mais rápido (<span class="mono">PONTOATIVO_OLLAMA_MODEL_MAPA</span>).</p>
+      <h2><span class="n">3.1</span>Barra do mapa com modelo próprio <span class="date">16/11</span></h2>
+      <p>A barra só <b>classifica</b> a pergunta (mapa, documentos, dúvidas, fora do escopo ou esclarecer), então pode usar um modelo menor e mais rápido que o das dúvidas (<span class="mono">PONTOATIVO_OLLAMA_MODEL_MAPA</span>).</p>
       <p>Para escolher, o <span class="mono">rotas.py</span> compara modelos pelo acerto e pelo tempo:</p>
       <pre class="sql">python -m pontoativo_rag.rotas --modelos gemma4:12b qwen3:4b</pre>
     </section>
 
-    <section class="full">
-      <h2><span class="n">3.5</span>Atualização pelo Geoportal do DF</h2>
-      <p>Buscar locais novos nas camadas oficiais da IDE-DF (mobiliário esportivo, parques urbanos e regiões) pela API ArcGIS, sem estragar a curadoria.</p>
-      <div class="inner2">
-        <div class="table-wrap">
-          <table>
-            <tr><th>Opção</th><th>Problema</th></tr>
-            <tr><td>Anexar tudo</td><td>Duplicaria a maior parte da base.</td></tr>
-            <tr><td>Substituir os registros da IDE-DF</td><td>Apagaria as correções manuais.</td></tr>
-            <tr><td class="green">Reconciliar por ID e distância</td><td>Inclui só o que é novo. <b>Escolhida.</b></td></tr>
-          </table>
-        </div>
-        <ul class="dots">
-          <li>Reusa os IDs oficiais (<span class="mono">ide-…</span>, <span class="mono">pqu-…</span>).</li>
-          <li>Bloqueia um local novo se houver outro da mesma categoria a até 25 m.</li>
-          <li>Gera primeiro uma base <b>candidata</b> e um relatório. Só publica com <span class="mono">--publish</span>, fazendo backup.</li>
-          <li>Nunca apaga um local que sumiu do serviço.</li>
-        </ul>
-      </div>
-      <p><span class="date">17/11</span>2.458 equipamentos baixados, 1.680 já existiam, <b>0 novos</b> e 1 duplicata bloqueada (um parque que já estava cadastrado com outro nome). A base continuou com <b>3.100</b> locais. Ou seja: a base já estava em dia.</p>
-    </section>
-
     <section>
-      <h2><span class="n">3.6</span>Testes no GitHub Actions</h2>
+      <h2><span class="n">3.2</span>Projeto organizado <span class="date">17/11</span></h2>
       <ul class="dots">
-        <li><b>Python:</b> pytest sem os testes de integração, que precisam de modelo.</li>
-        <li>Instala o PyTorch <b>só de CPU</b>: bem menor que o com CUDA e suficiente para os testes.</li>
-        <li><b>JavaScript:</b> confere a sintaxe dos scripts do mapa e se o catálogo dos encontros está em dia.</li>
+        <li><span class="mono">web/</span>: o site. <span class="mono">curadoria/</span>: ferramentas e dados do mapa. <span class="mono">docs/</span>: os entregáveis.</li>
+        <li>Saíram cópias e arquivos internos de trabalho.</li>
+        <li>Os testes da curadoria voltaram ao CI.</li>
+        <li>README reescrito: mais curto, com instalação, execução, avaliação e encontros.</li>
       </ul>
     </section>
 
     <section>
+      <h2><span class="n">3.3</span>Troca do embedding: MiniLM → E5-base <span class="date">17/11</span></h2>
+      <ul class="dots">
+        <li>Novo modelo: <span class="mono">intfloat/multilingual-e5-base</span>.</li>
+        <li>O E5 foi treinado com prefixos: <span class="cmd">query:</span> na pergunta e <span class="cmd">passage:</span> nos documentos. Sem eles a busca piora.</li>
+        <li>Coleção nova no Chroma (<span class="mono">pontoativo_e5_base_v1</span>), que registra o modelo que a criou.</li>
+      </ul>
+      <p class="why"><b>Por que coleção nova:</b> vetores de modelos diferentes vivem em "espaços" diferentes. O sistema se recusa a misturá-los.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">3.4</span>Cada modelo tem sua régua</h2>
+      <p>Melhor distância nas mesmas perguntas:</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th></th><th>MiniLM</th><th>E5</th></tr>
+          <tr><td>Com resposta</td><td>0,09 a 0,38</td><td>0,06 a 0,14</td></tr>
+          <tr><td>Sem resposta</td><td>0,46 a 0,72</td><td>0,15 a 0,21</td></tr>
+        </table>
+      </div>
+      <p>Com o limiar antigo (0,45), o E5 respondia <b>todas</b> as perguntas sem base.</p>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">3.5</span>Calibração do E5: limiar 0,12</h2>
+      <div class="inner2">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Limiar</th><th>Recusa o que tem resposta</th><th>Responde sem base</th></tr>
+            <tr><td>0,08</td><td class="red">1 pergunta</td><td>&mdash;</td></tr>
+            <tr><td class="green">0,09 a 0,145</td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td>0,15</td><td>&mdash;</td><td class="red">1 pergunta</td></tr>
+            <tr><td>0,18</td><td>&mdash;</td><td class="red">6 perguntas</td></tr>
+          </table>
+        </div>
+        <ul class="dots">
+          <li>Calibrado em 24 perguntas: 15 com resposta, 5 sem resposta e 4 fora do escopo.</li>
+          <li><b>0,12</b> fica no meio da faixa sem erros.</li>
+          <li>Os bônus da busca híbrida foram medidos com o MiniLM. Agora são multiplicados pela escala do modelo (0,12 ÷ 0,45 ≈ 0,27). Sem isso, as palavras pesavam mais que a semântica e o recall caía para 0,82.</li>
+          <li>Portão com E5 + <span class="mono">gemma4:12b</span>: <b>recall@4 0,94</b>, 5 de 5 abstenções certas e suporte factual 1,00.</li>
+        </ul>
+      </div>
+      <p class="note">Com 24 perguntas a faixa é uma estimativa: qualquer mudança nas fontes, no chunking ou no modelo exige calibrar de novo.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">3.6</span>Parquinhos no mapa <span class="date">19/11</span></h2>
+      <ul class="dots">
+        <li>812 parques infantis importados da mesma camada oficial dos PECs. Saíram 1 sem coordenada e os repetidos (mesmo endereço a até 30 m): ficaram <b>798</b>.</li>
+        <li>O mapa foi de 3.100 para <b>3.898</b> locais.</li>
+        <li>A busca entende "parquinho", "playground" e "brinquedos", e "parque infantil" não traz parque de caminhada.</li>
+        <li>Ficam <b>fora dos encontros</b>, que são só para adultos.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">3.7</span>Só no meu computador</h2>
+      <p>Na cópia local há um atualizador pelo Geoportal (<span class="mono">geoportal.py</span>, 17/11) que <b>não está no GitHub</b>. Ele reconcilia as camadas oficiais por ID e por distância (25 m) e não apaga nada. No teste, a base já estava em dia: <b>0 locais novos</b>.</p>
+      <p class="note">Falta decidir se ele entra no repositório.</p>
+    </section>
+
+    <section class="full">
       <div class="next">
         <h3>Próximos passos</h3>
         <ul class="dots">
-          <li>Recalibrar o limiar de distância com o E5.</li>
-          <li>Repetir a avaliação completa com E5 + Gemma.</li>
+          <li>Semana 4: o assistente multimodal (cartaz + pergunta).</li>
           <li>Esperar a resposta da LAI sobre os PECs.</li>
           <li>Começar as vistorias de acessibilidade.</li>
+          <li>Validar o servidor numa implantação HTTPS para uso por várias pessoas.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== SEMANA 4 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>Semana 4: o assistente aprende a ler cartazes</h1>
+    <div class="page-tag">Semana 4 · em andamento</div>
+  </header>
+  <p class="lede">Desafio da semana: um <b>assistente multimodal</b>, que processa pelo menos duas modalidades (texto, PDF, áudio, vídeo ou imagem). No PontoAtivo as duas são <b>imagem + texto</b>: a pessoa manda a foto de um cartaz de atividade e faz uma pergunta sobre ele. Esta folha é o plano. Os resultados entram quando houver código e testes.</p>
+
+  <div class="grid">
+
+    <section>
+      <h2><span class="n">4.1</span>O problema que isso resolve</h2>
+      <p>Hoje o assistente só aceita <b>texto</b> e só sabe o que está nos 25 documentos e nos locais do mapa.</p>
+      <p>Mas a informação do dia a dia do esporte no DF circula como <b>imagem</b>: o cartaz do aulão no PEC, a corrida de domingo, as inscrições do COP no grupo do WhatsApp. Nada disso está numa fonte oficial nem no mapa.</p>
+      <p class="why"><b>Por isso:</b> com o cartaz, a pessoa pergunta "que horas é a aula de vôlei?" ou "precisa pagar?" sem precisar ler tudo nem digitar.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">4.2</span>Por que imagem e não áudio ou vídeo</h2>
+      <ul class="dots">
+        <li><b>É o formato real</b> em que as atividades são divulgadas.</li>
+        <li><b>Tem resposta conferível:</b> dá para pôr o cartaz ao lado da extração e ver se cada campo bate. Com áudio e vídeo isso é bem mais difícil.</li>
+        <li><b>Combina com a inclusão:</b> quem tem baixa visão pode pedir para o assistente ler o cartaz.</li>
+        <li><b>Roda no notebook:</b> um modelo de visão no Ollama, sem mandar a foto para fora.</li>
+      </ul>
+      <p class="note">PDF também seria possível, mas o projeto já lê PDF na ingestão do RAG. A novidade real é a imagem.</p>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">4.3</span>O fluxo novo, passo a passo</h2>
+      <div class="diagram wide">
+        <svg viewBox="0 0 860 190" role="img" aria-label="Fluxo: a pessoa envia o cartaz e a pergunta; a interface valida o arquivo; o agente de imagem extrai os dados em JSON e marca o que está ilegível; o agente de texto recebe a pergunta e o JSON e responde dizendo que os dados vêm do cartaz e o que está faltando.">
+          <g filter="url(#wob)">
+            <rect class="box" x="10" y="40" width="130" height="66" rx="8"/>
+            <rect class="box" x="175" y="40" width="140" height="66" rx="8"/>
+            <rect class="box-hi" x="350" y="40" width="150" height="66" rx="8"/>
+            <rect class="box" x="535" y="40" width="130" height="66" rx="8"/>
+            <rect class="box-hi" x="700" y="40" width="150" height="66" rx="8"/>
+          </g>
+          <path class="ar" d="M142 73 H171" marker-end="url(#arr)"/>
+          <path class="ar" d="M317 73 H346" marker-end="url(#arr)"/>
+          <path class="ar" d="M502 73 H531" marker-end="url(#arr)"/>
+          <path class="ar" d="M667 73 H696" marker-end="url(#arr)"/>
+          <text class="t-soft" x="75" y="28" text-anchor="middle">pessoa</text>
+          <text class="t-strong" x="75" y="68" text-anchor="middle">cartaz +</text>
+          <text class="t-strong" x="75" y="88" text-anchor="middle">pergunta</text>
+          <text class="t-soft" x="245" y="28" text-anchor="middle">Pessoa 3</text>
+          <text class="t-strong" x="245" y="68" text-anchor="middle">interface</text>
+          <text class="t-soft" x="245" y="88" text-anchor="middle">prévia, formato, tamanho</text>
+          <text class="t-soft" x="425" y="28" text-anchor="middle">Pessoa 2</text>
+          <text class="t-strong" x="425" y="68" text-anchor="middle">agente de imagem</text>
+          <text class="t-soft" x="425" y="88" text-anchor="middle">"o que está escrito?"</text>
+          <text class="t-soft" x="600" y="28" text-anchor="middle">o combinado</text>
+          <text class="t-strong" x="600" y="68" text-anchor="middle">JSON</text>
+          <text class="t-soft" x="600" y="88" text-anchor="middle">campos + ilegíveis</text>
+          <text class="t-soft" x="775" y="28" text-anchor="middle">Pessoa 1</text>
+          <text class="t-strong" x="775" y="68" text-anchor="middle">agente de texto</text>
+          <text class="t-soft" x="775" y="88" text-anchor="middle">"o que foi perguntado?"</text>
+          <text class="t-cell" x="425" y="140" text-anchor="middle"><tspan x="425">vê a imagem,</tspan><tspan x="425" dy="18">não responde nada</tspan></text>
+          <text class="t-cell" x="775" y="140" text-anchor="middle"><tspan x="775">não vê a imagem,</tspan><tspan x="775" dy="18">só usa o JSON</tspan></text>
+          <text class="t-red" x="245" y="140" text-anchor="middle"><tspan x="245">arquivo inválido:</tspan><tspan x="245" dy="18">erro claro, sem chamar IA</tspan></text>
+        </svg>
+      </div>
+      <p class="note">A Pessoa 4 testa cada seta (o cartaz bate com o JSON? o JSON bate com a resposta?) e a Pessoa 5 documenta e grava a demonstração.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">4.4</span>Por que dois agentes, e não um só</h2>
+      <p>Um modelo de visão poderia receber a foto e a pergunta e responder direto. Separar em dois:</p>
+      <ul class="dots">
+        <li><b>Deixa conferir o meio do caminho.</b> Se a resposta errar, dá para ver se o erro foi na <b>leitura</b> ou na <b>resposta</b>.</li>
+        <li><b>Cada parte tem seus testes</b> e uma pessoa responsável.</li>
+        <li><b>A extração vira dado reutilizável:</b> o mesmo JSON serve para outras perguntas sobre o cartaz sem ler a imagem de novo.</li>
+        <li><b>É a mesma ideia do RAG:</b> primeiro buscar a evidência, depois responder <b>só</b> com ela. No RAG a evidência são os trechos; aqui é o JSON do cartaz.</li>
+      </ul>
+      <p class="why"><b>Custo:</b> são duas chamadas ao modelo, então fica mais lento. Vale pela confiabilidade.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">4.5</span>O combinado entre os agentes (JSON)</h2>
+      <p>As pessoas 1, 2 e 3 precisam fechar o formato. Uma proposta:</p>
+      <pre class="sql">{
+  "texto_identificado": "...",
+  "atividades": ["vôlei", "funcional"],
+  "horarios": ["sáb 8h"],
+  "local": "PEC EQ 4/6, Gama",
+  "datas": [],
+  "contato": null,
+  "ilegivel": ["rodapé"]
+}</pre>
+      <ul class="dots">
+        <li><span class="mono">null</span> ou lista vazia = <b>não está no cartaz</b>. Nunca um valor "provável".</li>
+        <li><span class="mono">ilegivel</span> diz o que existe mas não deu para ler, e o agente de texto avisa.</li>
+      </ul>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">4.6</span>Como isso conversa com o que já existe</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Já existia</th><th>No agente multimodal</th></tr>
+          <tr><td>Regra de não inventar endereço ou horário</td><td>Campo ausente no cartaz é respondido como ausente: "o cartaz não informa o horário".</td></tr>
+          <tr><td>Documento é dado, não instrução</td><td>Texto escrito no cartaz também é dado. Um cartaz com "ignore as regras" é só texto lido, nunca uma ordem.</td></tr>
+          <tr><td>Abstenção do RAG (distância &gt; 0,12)</td><td>Se a pergunta não é sobre o cartaz ou o cartaz não traz a resposta, o assistente diz isso em vez de completar.</td></tr>
+          <tr><td>Citação da fonte de cada frase</td><td>A resposta diz que a informação vem <b>do cartaz enviado</b>, que é declarado pelo organizador, não oficial.</td></tr>
+          <tr><td>Níveis de confiança do mapa</td><td>O que vem de cartaz equivale a "declarado pela organização": útil, mas é preciso confirmar.</td></tr>
+          <tr><td>Moderação antes do modelo</td><td>Continua valendo para a pergunta digitada.</td></tr>
+          <tr><td>Ollama local</td><td>A foto não sai do computador. Isso importa porque cartaz pode ter telefone pessoal.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">4.7</span>Falhas que dá para prever e como mitigar</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Falha</th><th>Exemplo</th><th>Mitigação</th></tr>
+          <tr><td>Foto ruim</td><td>Borrada, torta, com reflexo ou cortada</td><td>Marcar como ilegível e pedir outra foto, em vez de adivinhar.</td></tr>
+          <tr><td>Letra decorativa</td><td>"Aulão" em fonte de pincel</td><td>Casos de teste com cartazes reais e o campo <span class="mono">ilegivel</span>.</td></tr>
+          <tr><td>Data ambígua</td><td>"sábado, 8h" sem dia nem ano</td><td>Repetir como está no cartaz, sem calcular uma data.</td></tr>
+          <tr><td>Cartaz vencido</td><td>Evento de outubro enviado em novembro</td><td>Se a data já passou, avisar.</td></tr>
+          <tr><td>Modelo inventa campo</td><td>Põe um preço que não está no cartaz</td><td>A Pessoa 4 compara campo a campo com o cartaz e registra.</td></tr>
+          <tr><td>Instrução escondida</td><td>Texto no cartaz mandando o assistente fazer outra coisa</td><td>JSON entregue como "dado não confiável", como os documentos do RAG.</td></tr>
+          <tr><td>Arquivo errado</td><td>PDF de 30 MB, HEIC, imagem que não é cartaz</td><td>Limite de formato e tamanho na interface, com mensagem clara.</td></tr>
+          <tr><td>Dado pessoal</td><td>Celular de um professor no cartaz</td><td>Não guardar a imagem depois da resposta, como na regra de contatos institucionais da curadoria.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="n">4.8</span>Como isso melhora o PontoAtivo</h2>
+      <ul class="checks">
+        <li><b>Informação recente:</b> No relatório de 10/11, 14 das 24 fontes estavam antigas ou em revisão. O cartaz traz o que vale <b>esta semana</b>.</li>
+        <li><b>Cobre o informal:</b> aulões, corridas e grupos de bairro que não estão em nenhuma base oficial.</li>
+        <li><b>Mais acessível:</b> ler um cartaz em voz alta ou em texto simples ajuda quem tem baixa visão ou dificuldade de leitura.</li>
+        <li><b>Menos digitação:</b> manda a foto e pergunta.</li>
+        <li><b>Abre caminho:</b> um cartaz poderia virar rascunho de encontro na agenda ou um local candidato no mapa, sempre passando por revisão (ideia futura, fora desta semana).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">4.9</span>Quem faz o quê</h2>
+      <ol class="steps">
+        <li><b>Agente de texto:</b> responde à pergunta com os dados do cartaz, diz o que falta e indica a origem.</li>
+        <li><b>Agente de imagem:</b> extrai atividades, horários, local, datas e contato, marca o ilegível e define os limites de arquivo.</li>
+        <li><b>Integração e interface:</b> envio com prévia, carregamento, erros e o botão de limpar; liga imagem → extração → resposta.</li>
+        <li><b>Testes e confiabilidade:</b> matriz de testes com evidências: campos inventados, ausentes e falhas.</li>
+        <li><b>Documentação e demonstração:</b> modalidades, arquitetura, limitações, casos de falha e a gravação da demonstração.</li>
+      </ol>
+    </section>
+
+    <section class="full">
+      <div class="next">
+        <h3>Ainda em aberto</h3>
+        <ul class="dots">
+          <li>Fechar o formato do JSON (pessoas 1, 2 e 3).</li>
+          <li>Escolher o modelo de visão do Ollama e medir o tempo no notebook da demonstração.</li>
+          <li>Juntar cartazes reais para os testes, incluindo fotos ruins de propósito.</li>
+          <li>Preencher aqui os resultados da matriz de testes quando ela estiver pronta.</li>
         </ul>
       </div>
     </section>
