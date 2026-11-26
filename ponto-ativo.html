@@ -459,6 +459,7 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
           <tr><td>pytest + GitHub Actions</td><td>Testes a cada push</td><td>Os testes rápidos usam dublês no lugar dos modelos. Os de integração ficam marcados e não rodam no CI.</td></tr>
         </table>
       </div>
+      <p class="note">Como cada uma foi escolhida, com as alternativas e os números: folha <b>Escolhas</b>, logo depois desta.</p>
     </section>
 
     <section>
@@ -480,6 +481,140 @@ svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray
         <li><span class="date">16 a 19/11</span>E5 com limiar 0,12, projeto organizado e parquinhos. <i>(Semana 3)</i></li>
         <li><span class="date">esta semana</span>Agente multimodal: o assistente lê cartazes (imagem + texto). <i>(Semana 4, em andamento)</i></li>
       </ol>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== ESCOLHAS ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>Como escolhemos cada peça</h1>
+    <div class="page-tag">Escolhas</div>
+  </header>
+  <p class="lede">Banco vetorial, modelo de embeddings e LLM: o que pesa na escolha, quais eram as alternativas e o que os números do PontoAtivo mostraram. Para separar o que o grupo decidiu do que eu acrescentei para estudo, cada bloco tem uma etiqueta: <span class="pill hi">no projeto</span> = registrado no repositório; <span class="pill">critério geral</span> = comparação de estudo, não decidida pelo grupo.</p>
+
+  <div class="grid">
+
+    <section class="full">
+      <h2><span class="n">E.1</span>O método, igual para as três <span class="pill hi">no projeto</span></h2>
+      <ol class="steps">
+        <li><b>Escrever as restrições antes:</b> rodar no notebook, sem mandar dados para fora, funcionar em português, caber num Mac M4 de 24 GB e ser explicável (por isso sem LangChain).</li>
+        <li><b>Medir com as mesmas perguntas:</b> 18 perguntas de avaliação (13 com resposta e 5 sem), sempre as mesmas para todo candidato.</li>
+        <li><b>Passar no portão de qualidade:</b> recall ≥ 0,90, fonte certa em ≥ 95%, nenhuma falsa abstenção, nenhuma citação inválida, nenhuma afirmação sem suporte.</li>
+        <li><b>Revisão humana</b> das respostas. Só então a troca vale.</li>
+      </ol>
+      <p class="why"><b>Por quê:</b> sem isso, a escolha vira "o modelo que parece melhor". Com o portão, a troca de Llama para Gemma e a de MiniLM para E5 têm números.</p>
+    </section>
+
+    <!-- banco vetorial -->
+    <section class="full">
+      <h2><span class="n">E.2</span>Banco vetorial: ChromaDB</h2>
+      <p class="sub">O que pesa na escolha</p>
+      <ul class="dots">
+        <li><b>Escala:</b> o PontoAtivo tem cerca de <b>1.450 vetores</b> (avaliação de 13/11). É minúsculo: com isso o banco quase não muda o resultado. O que muda é o embedding e o chunking.</li>
+        <li><b>Servidor ou arquivo:</b> num protótipo que roda no notebook, um banco que é só uma pasta evita instalar e manter um serviço.</li>
+        <li><b>Metadados e filtros:</b> o projeto filtra por região, tipo de documento, fonte e atualidade. O banco precisa guardar e filtrar isso junto com o vetor.</li>
+        <li><b>Atualizar sem duplicar:</b> <span class="cmd">upsert</span> com IDs estáveis.</li>
+      </ul>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Opção</th><th>Como é</th><th>Para o PontoAtivo</th></tr>
+          <tr><td class="green">ChromaDB</td><td>Biblioteca Python, salva numa pasta, guarda texto e metadados, filtra, faz upsert.</td><td><b>Escolhido.</b> Local, sem servidor, distância cosseno <span class="pill hi">no projeto</span></td></tr>
+          <tr><td>FAISS</td><td>Biblioteca de busca muito rápida, só de vetores.</td><td>Texto, metadados, filtros e persistência ficariam por nossa conta. <span class="pill">critério geral</span></td></tr>
+          <tr><td>pgvector</td><td>Extensão do PostgreSQL: vetor e SQL na mesma tabela.</td><td>Ótimo se já houvesse um Postgres. Aqui, exigiria um servidor. <span class="pill">critério geral</span></td></tr>
+          <tr><td>Qdrant, Weaviate, Milvus</td><td>Servidores próprios para milhões de vetores.</td><td>Mais do que o necessário para 1.450 vetores. <span class="pill">critério geral</span></td></tr>
+          <tr><td>Pinecone</td><td>Serviço na nuvem, pago.</td><td>Os textos sairiam do computador e haveria custo. <span class="pill">critério geral</span></td></tr>
+        </table>
+      </div>
+      <p class="note">O repositório registra o Chroma e os motivos "local, sem servidor, cosseno", mas <b>não registra uma comparação</b> com as outras opções. A tabela é para estudo.</p>
+    </section>
+
+    <!-- embeddings -->
+    <section class="full">
+      <h2><span class="n">E.3</span>Modelo de embeddings: MiniLM → E5-base</h2>
+      <div class="inner2">
+        <div class="stack">
+          <p class="sub">O que pesa na escolha</p>
+          <ul class="dots">
+            <li><b>Idioma:</b> as fontes e as perguntas são em português. Precisa ser multilíngue.</li>
+            <li><b>Janela:</b> quanto texto o modelo lê por vez. O que passa disso é cortado <b>sem aviso</b>.</li>
+            <li><b>Peso:</b> modelo maior costuma entender melhor, mas indexa mais devagar.</li>
+            <li><b>Régua própria:</b> cada modelo espalha as distâncias de um jeito. Trocar de modelo obriga a recalibrar o limiar.</li>
+            <li><b>Rodar local:</b> embeddings por API (OpenAI, Cohere) são bons, mas mandam os textos para fora e cobram por uso. <span class="pill">critério geral</span></li>
+          </ul>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th></th><th>MiniLM-L12</th><th>E5-base</th></tr>
+            <tr><td>Parâmetros</td><td>~118 milhões</td><td>~278 milhões</td></tr>
+            <tr><td>Tamanho do vetor</td><td>384</td><td>768</td></tr>
+            <tr><td>Janela</td><td>128 tokens</td><td>512 tokens</td></tr>
+            <tr><td>Prefixo</td><td>não</td><td><span class="mono">query:</span> / <span class="mono">passage:</span></td></tr>
+            <tr><td>Limiar calibrado</td><td>0,45</td><td>0,12</td></tr>
+            <tr><td>Recall@4</td><td><b>0,97</b></td><td>0,94</td></tr>
+            <tr><td>Indexar tudo (Mac M4)</td><td>poucos minutos</td><td>~17 min</td></tr>
+          </table>
+          <p class="note">As quatro primeiras linhas são dados públicos dos modelos <span class="pill">critério geral</span>; as três últimas foram medidas no projeto <span class="pill hi">no projeto</span>.</p>
+        </div>
+      </div>
+      <div class="alert">
+        <h3>O que os números mostram</h3>
+        <p>Nas 18 perguntas, a troca para o E5 <b>não melhorou o recall</b> (0,97 → 0,94) e deixou a indexação mais lenta. Os dois passam no portão. O repositório registra a troca e a calibração, mas <b>não o motivo</b>. Vale anotar aqui. Uma hipótese para testar: o E5 lê até 512 tokens, e o projeto ainda corta em segmentos de 120 palavras, pensados para o MiniLM. Segmentos maiores talvez aproveitem melhor o E5.</p>
+      </div>
+      <p class="note">Outros candidatos locais e multilíngues para comparar no portão: <span class="mono">multilingual-e5-small</span> (mais leve), <span class="mono">bge-m3</span> (janela bem maior, mais pesado). <span class="pill">critério geral</span></p>
+    </section>
+
+    <!-- LLM -->
+    <section class="full">
+      <h2><span class="n">E.4</span>LLM: Llama 3.2 3B → Gemma 4 12B</h2>
+      <div class="inner2">
+        <div class="stack">
+          <p class="sub">O que pesa na escolha</p>
+          <ul class="dots">
+            <li><b>Não inventar:</b> a métrica que mais importa é "afirmações sem suporte", não a velocidade.</li>
+            <li><b>Seguir o formato:</b> o RAG pede JSON com a fonte de cada frase. Modelo que não segue o esquema gera novas tentativas ou falha.</li>
+            <li><b>Caber na GPU:</b> um modelo que não cabe na memória da GPU roda na CPU e fica muito lento.</li>
+            <li><b>Rodar local (Ollama):</b> sem custo por pergunta e sem mandar dados para fora.</li>
+          </ul>
+          <p class="sub">O teste de 12/11 <span class="pill hi">no projeto</span></p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <tr><th>Portão</th><th>llama3.2:3b</th><th>gemma4:12b</th></tr>
+            <tr><td>Recall@5</td><td>0,97</td><td>0,97</td></tr>
+            <tr><td>Fonte certa</td><td>1,00</td><td>1,00</td></tr>
+            <tr><td>Cobertura das citações</td><td class="red">0,50</td><td class="green"><b>1,00</b></td></tr>
+            <tr><td>Suporte factual</td><td>0,91</td><td class="green"><b>1,00</b></td></tr>
+            <tr><td>Afirmações sem suporte</td><td class="red"><b>5</b></td><td class="green"><b>0</b></td></tr>
+            <tr><td>Resultado</td><td class="red">reprovado</td><td class="green">aprovado</td></tr>
+          </table>
+        </div>
+      </div>
+      <ul class="dots">
+        <li>A <b>busca</b> era igual nos dois (recall 0,97). A diferença toda estava na <b>geração</b>: o 3B escrevia frases sem fonte. <span class="pill hi">no projeto</span></li>
+        <li><b>Por que o 12B e não o 26B:</b> o 26B não cabe nos 24 GB da GPU do Mac e roda quase todo na CPU. O 12B ocupa uns 8 GB e roda inteiro na GPU. No computador pessoal, com mais memória, o 26B funciona. <span class="pill hi">no projeto</span></li>
+        <li><b>Detalhe que custou tempo:</b> o Gemma 4 tem modo de raciocínio, que gastava todo o limite de tokens e devolvia resposta vazia. A solução foi enviar <span class="mono">"think": false</span>. <span class="pill hi">no projeto</span></li>
+        <li><b>A barra do mapa usa outro modelo:</b> ela só classifica a pergunta, então um modelo menor pode servir. O <span class="mono">rotas.py</span> mede o acerto e o tempo de cada candidato. <span class="pill hi">no projeto</span></li>
+        <li><b>APIs (GPT, Claude, Gemini):</b> respondem melhor e mais rápido, mas são pagas, mandam a pergunta e os trechos para fora e dependem de internet. Outros modelos locais (Qwen 3, Llama 3.1 8B, Mistral) só valeriam se passassem no mesmo portão. <span class="pill">critério geral</span></li>
+      </ul>
+    </section>
+
+    <section class="full">
+      <div class="next">
+        <h3>Resumo para lembrar</h3>
+        <ul class="checks">
+          <li><b>Banco vetorial:</b> escolha pelo jeito de rodar (pasta ou servidor) e pelos filtros. Em escala pequena, quase não muda o resultado.</li>
+          <li><b>Embedding:</b> é o que decide a busca. Veja idioma, janela e peso, e lembre que trocar de modelo obriga a recalibrar o limiar.</li>
+          <li><b>LLM:</b> decide se a resposta inventa ou não. Meça as afirmações sem suporte e confira se ele cabe na GPU.</li>
+          <li>Em todos: <b>mesmas perguntas, mesmo portão, números anotados</b>.</li>
+        </ul>
+      </div>
     </section>
 
   </div>
