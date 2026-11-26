@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}</style>
+<title>Diário do PontoAtivo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@300;400;700&display=swap">
+<style>
+/* Layout: folhas de caderno (diário do PontoAtivo, uma por semana) escritas à caneta sobre a mesa; seções em 2 colunas que viram 1 no celular */
+:root {
+  --desk: #e6ebf2;
+  --paper: #fdfdfa;
+  --ink: #2142a6;          /* caneta azul */
+  --ink-strong: #13205a;   /* azul-marinho dos títulos e caixas */
+  --ink-soft: #6b7bb0;
+  --red: #c0352c;
+  --green: #1b7a49;
+  --marker: rgba(255, 221, 64, .55);
+  --paper-shadow: rgba(19, 32, 90, .14);
+  --font-hand: "Kalam", "Segoe Print", "Comic Sans MS", cursive;
+  --font-title: "Caveat", "Segoe Script", "Brush Script MT", cursive;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+    --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --desk: #0b1019; --paper: #161f33; --ink: #a3bcff; --ink-strong: #e4eaff; --ink-soft: #8a99c8;
+  --red: #ff8f86; --green: #74dca2; --marker: rgba(255, 214, 64, .26); --paper-shadow: rgba(0, 0, 0, .5);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 17px;
+  line-height: 1.45;
+  padding-block: 28px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.sheets { display: grid; gap: 36px; }
+.sheet {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: var(--paper);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px var(--paper-shadow), 0 12px 32px var(--paper-shadow);
+  padding: clamp(18px, 4vw, 44px);
+  display: grid;
+  gap: 26px;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* cabeçalho */
+.head { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 12px; }
+.head h1 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: clamp(38px, 6vw, 58px);
+  line-height: 1.05;
+  color: var(--ink-strong);
+  text-wrap: balance;
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 10px;
+}
+.page-tag {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink-strong);
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  padding: 2px 14px;
+  white-space: nowrap;
+}
+.lede { margin: -10px 0 0; color: var(--ink-soft); font-size: 16px; }
+
+/* grade de seções */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 40px; }
+.full { grid-column: 1 / -1; }
+section { min-width: 0; }
+section h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--ink-strong);
+  border-bottom: 2px solid var(--ink-strong);
+  border-radius: 0 0 60% 8% / 0 0 5px 3px;
+  padding-bottom: 2px;
+  text-wrap: balance;
+}
+section h2 .n { margin-right: 8px; }
+section > p { margin: 0 0 8px; }
+.inner2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 36px; }
+.inner2 > * { min-width: 0; }
+.stack { display: grid; gap: 10px; align-content: start; }
+
+ul.dots, ul.checks, ol.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+ul.dots li { position: relative; padding-left: 22px; }
+ul.dots li::before {
+  content: ""; position: absolute; left: 4px; top: .62em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--ink-strong);
+}
+ul.checks li { position: relative; padding-left: 28px; }
+ul.checks li::before {
+  content: "\2713"; position: absolute; left: 2px; top: -2px;
+  font-weight: 700; font-size: 22px; color: var(--green);
+}
+ol.steps { counter-reset: s; }
+ol.steps li { counter-increment: s; position: relative; padding-left: 38px; }
+ol.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 1px;
+  width: 26px; height: 26px; display: grid; place-items: center;
+  border: 2px solid var(--ink-strong); border-radius: 50% 46% 52% 48%;
+  font-weight: 700; font-size: 15px; color: var(--ink-strong); line-height: 1;
+}
+
+b, strong { color: var(--ink-strong); font-weight: 700; }
+.cmd {
+  font-weight: 700;
+  color: var(--ink-strong);
+  background: linear-gradient(transparent 38%, var(--marker) 38%, var(--marker) 88%, transparent 88%);
+  padding: 0 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.red { color: var(--red); }
+.green { color: var(--green); }
+.note { color: var(--ink-soft); font-size: 15px; margin: 8px 0 0; }
+.sub { margin: 8px 0 4px; font-weight: 700; color: var(--ink-strong); }
+
+/* código escrito à mão */
+pre.sql {
+  margin: 6px 0 10px;
+  border: 2px dashed var(--ink-strong);
+  border-radius: 14px 4px 16px 5px;
+  padding: 8px 12px;
+  font-family: var(--font-hand);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 2;
+}
+pre.sql .k { color: var(--ink-strong); font-weight: 700; }
+pre.sql .s { color: var(--green); }
+pre.sql .c { color: var(--ink-soft); }
+
+/* caixa de alerta */
+.alert {
+  border: 2px dashed var(--red);
+  border-radius: 14px 4px 16px 5px;
+  padding: 8px 12px;
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+}
+.alert h3 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: 25px; line-height: 1.1; color: var(--red); }
+.alert p { margin: 0; }
+
+/* tabelas desenhadas */
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--ink-strong);
+  font-size: 15.5px;
+  line-height: 1.35;
+}
+th, td { border: 1.5px solid var(--ink-strong); padding: 6px 9px; text-align: left; vertical-align: top; }
+th { font-family: var(--font-title); font-size: 21px; color: var(--ink-strong); font-weight: 700; }
+td:first-child { color: var(--ink-strong); font-weight: 700; }
+td code, .mono { font-family: var(--font-hand); font-weight: 700; color: var(--ink-strong); }
+
+/* ordem de execução */
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 4px; margin: 4px 0 10px; }
+.flow .lbl { width: 100%; font-weight: 700; color: var(--ink-strong); font-size: 15px; }
+.pill {
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  padding: 0 9px;
+  font-weight: 700;
+  color: var(--ink-strong);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.pill.hi { background: var(--marker); }
+.pill small { font-weight: 400; color: var(--ink-soft); margin-right: 3px; }
+.flow .to { color: var(--ink-soft); }
+
+/* JOINs */
+.venns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 18px; margin-bottom: 12px; }
+.venn { display: grid; gap: 2px; justify-items: center; text-align: center; }
+.venn svg { width: 100%; max-width: 150px; height: auto; }
+.venn b { font-size: 16px; }
+.venn span { font-size: 14px; color: var(--ink-soft); line-height: 1.25; }
+
+/* diagramas */
+.diagram { overflow-x: auto; }
+.diagram svg { display: block; width: 100%; height: auto; }
+svg .ln { fill: none; stroke: var(--ink-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+svg .thin { fill: none; stroke: var(--ink-strong); stroke-width: 1.3; }
+svg .ar { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+svg .mk { fill: none; stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+svg .fillpaper { fill: var(--paper); }
+svg .hl { fill: var(--marker); }
+svg .hatch-line { stroke: var(--ink); stroke-width: 1.7; opacity: .75; }
+svg text { font-family: var(--font-hand); fill: var(--ink); font-size: 15px; }
+svg .t-strong { fill: var(--ink-strong); font-weight: 700; font-size: 16px; }
+svg .t-title { font-family: var(--font-title); fill: var(--ink-strong); font-weight: 700; font-size: 24px; }
+svg .t-soft { fill: var(--ink-soft); font-size: 13.5px; }
+svg .t-red { fill: var(--red); font-weight: 700; }
+svg .t-cell { font-size: 14px; }
+
+.foot {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px;
+  border-top: 1.5px solid var(--ink-strong);
+  padding-top: 10px;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+.foot .sig { font-family: var(--font-title); font-size: 30px; font-weight: 700; color: var(--ink-strong); transform: rotate(-3deg); }
+
+/* níveis de modelagem */
+.levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 18px; margin-bottom: 8px; }
+.level {
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  padding: 10px 14px;
+  min-width: 0;
+}
+.level h3 { margin: 0; font-family: var(--font-title); font-weight: 700; font-size: 25px; line-height: 1.1; color: var(--ink-strong); }
+.level .tag { font-size: 13.5px; color: var(--ink-soft); }
+.level p { margin: 6px 0 0; font-size: 15.5px; }
+
+/* espaço vetorial */
+svg .pt { fill: var(--ink-strong); }
+svg .pt-q { fill: var(--red); }
+svg .dash { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-dasharray: 4 4; }
+
+@media (max-width: 720px) {
+  .grid, .inner2 { grid-template-columns: 1fr; }
+  .head { grid-template-columns: 1fr; }
+  .page-tag { justify-self: start; }
+  .venns { grid-template-columns: repeat(2, 1fr); }
+  .levels { grid-template-columns: 1fr; }
+}
+
+/* impressão e PDF: folhas A4, sempre no tema claro */
+@media print {
+  html:root:not(.x) {
+    --desk: #ffffff; --paper: #ffffff; --ink: #2142a6; --ink-strong: #13205a; --ink-soft: #5d6da3;
+    --red: #c0352c; --green: #1b7a49; --marker: rgba(255, 221, 64, .55);
+    color-scheme: light;
+  }
+  @page { size: A4; margin: 12mm 11mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { padding: 0; font-size: 12.5px; line-height: 1.4; }
+  .sheets { gap: 0; }
+  .sheet { display: block; max-width: none; padding: 0; box-shadow: none; border-radius: 0; }
+  .sheet > * + * { margin-top: 16px; }
+  .sheet + .sheet { break-before: page; }
+  .head { grid-template-columns: 1fr auto; }
+  .head h1 { font-size: 38px; text-underline-offset: 7px; }
+  .page-tag { justify-self: end; font-size: 17px; }
+  .lede { font-size: 12px; }
+  .sheet > .lede { margin-top: 6px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px 26px; }
+  .grid > section { flex: 0 0 calc(50% - 13px); }
+  .grid > section.full { flex-basis: 100%; }
+  .inner2 { grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+  .venns { grid-template-columns: repeat(4, 1fr); }
+  .levels { grid-template-columns: repeat(3, 1fr); }
+  .level h3 { font-size: 20px; }
+  .level p { font-size: 12px; }
+  section { break-inside: avoid; }
+  section h2 { font-size: 22px; margin-bottom: 6px; break-after: avoid; }
+  .note { font-size: 11.5px; }
+  .cmd { white-space: normal; }
+  pre.sql, .conflict { font-size: 11.5px; overflow: visible; white-space: pre-wrap; padding: 5px 9px; }
+  table { font-size: 11.5px; }
+  th { font-size: 15px; }
+  th, td { padding: 3px 6px; }
+  .table-wrap, .diagram { overflow: visible; }
+  ol.steps li { padding-left: 30px; }
+  ol.steps li::before { width: 20px; height: 20px; font-size: 12px; }
+  ul.checks li::before { font-size: 17px; }
+  .foot { break-inside: avoid; font-size: 12px; }
+  .foot .sig { font-size: 24px; }
+}
+</style>
+
+<!-- definições compartilhadas dos desenhos -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path class="mk" d="M1.5 1.5 L8.5 5 L1.5 8.5"/>
+    </marker>
+    <filter id="wob" filterUnits="userSpaceOnUse" x="-50" y="-50" width="2000" height="2000">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+      <line class="hatch-line" x1="0" y1="0" x2="0" y2="6"/>
+    </pattern>
+    <clipPath id="clipA"><circle cx="48" cy="42" r="32"/></clipPath>
+  </defs>
+</svg>
+
+<style>
+/* extras do diário do PontoAtivo */
+.lede a { color: var(--ink-strong); font-weight: 700; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 16px; margin: 4px 0 6px; }
+.stat {
+  border: 2px solid var(--ink-strong);
+  border-radius: 255px 14px 225px 14px / 14px 225px 14px 255px;
+  padding: 8px 12px;
+  text-align: center;
+  min-width: 0;
+}
+.stat b { display: block; font-family: var(--font-title); font-size: 36px; line-height: 1; }
+.stat span { font-size: 14.5px; color: var(--ink-soft); line-height: 1.25; display: block; }
+.diagram.wide svg { min-width: 620px; }
+.why { margin: 8px 0 0; padding-left: 12px; border-left: 3px solid var(--marker); }
+.why b { color: var(--red); }
+.date { font-family: var(--font-title); font-weight: 700; font-size: 22px; color: var(--red); margin-right: 6px; }
+.next { border: 2px dashed var(--ink-soft); border-radius: 14px 4px 16px 5px; padding: 8px 12px; }
+.next h3 { margin: 0 0 4px; font-family: var(--font-title); font-size: 25px; color: var(--ink-strong); }
+svg .box { fill: var(--paper); stroke: var(--ink-strong); stroke-width: 2; }
+svg .box-hi { fill: var(--marker); stroke: var(--ink-strong); stroke-width: 2; }
+svg .box-red { fill: none; stroke: var(--red); stroke-width: 2; stroke-dasharray: 6 4; }
+@media (max-width: 720px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media print {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+  .stat b { font-size: 26px; }
+  .stat span { font-size: 11px; }
+  .date { font-size: 17px; }
+  .next h3 { font-size: 19px; }
+  .diagram.wide svg { min-width: 0; }
+}
+</style>
+
+<main class="sheets">
+
+<!-- ===================== VISÃO GERAL ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>PontoAtivo: diário do projeto</h1>
+    <div class="page-tag">Visão geral</div>
+  </header>
+  <p class="lede">Mapa esportivo e inclusivo do Distrito Federal, com agenda de encontros e um assistente que responde só com base em fontes oficiais. Projeto em grupo. Aqui anoto, semana a semana, o que mudou e <b>por que</b> cada escolha foi feita.</p>
+
+  <div class="grid">
+
+    <section class="full">
+      <h2><span class="n">0.1</span>As três partes do PontoAtivo</h2>
+      <div class="stats">
+        <div class="stat"><b>3.100</b><span>locais no mapa (IDE-DF, Ibram, curadoria)</span></div>
+        <div class="stat"><b>25</b><span>documentos oficiais na base do assistente</span></div>
+        <div class="stat"><b>24</b><span>módulos Python em <span class="mono">src/pontoativo_rag/</span></span></div>
+        <div class="stat"><b>20</b><span>arquivos de testes, rodando no GitHub Actions</span></div>
+      </div>
+      <div class="inner2">
+        <ul class="dots">
+          <li><b>Mapa:</b> PECs, COPs, quadras, campos, parques, clubes e paradesporto, com filtros. Feito com Leaflet e agrupamento de pinos.</li>
+          <li><b>Encontros:</b> agenda em que a pessoa marca uma atividade (dupla, trio ou grupo), escolhe o nível e outras confirmam vaga.</li>
+        </ul>
+        <ul class="dots">
+          <li><b>Assistente (RAG):</b> busca os trechos dos documentos oficiais mais parecidos com a pergunta e um LLM local escreve a resposta citando a fonte de cada frase.</li>
+          <li><b>Barra do mapa:</b> classifica a pergunta (mapa, documentos, dúvidas, fora do escopo ou pedir esclarecimento) e manda para a parte certa.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">0.2</span>Como uma pergunta vira resposta</h2>
+      <div class="diagram wide">
+        <svg viewBox="0 0 860 250" role="img" aria-label="Pipeline do RAG: fontes, limpeza, chunks de 450 palavras, segmentos de 120, embeddings E5 e ChromaDB. A pergunta vira vetor, busca no Chroma, e se a distância passar de 0,45 o sistema se abstém; senão o Gemma responde com fonte por frase.">
+          <text class="t-soft" x="10" y="18">ingestão (uma vez)</text>
+          <g filter="url(#wob)">
+            <rect class="box" x="10" y="30" width="110" height="52" rx="8"/>
+            <rect class="box" x="150" y="30" width="110" height="52" rx="8"/>
+            <rect class="box" x="290" y="30" width="120" height="52" rx="8"/>
+            <rect class="box" x="440" y="30" width="120" height="52" rx="8"/>
+            <rect class="box" x="590" y="30" width="110" height="52" rx="8"/>
+            <rect class="box-hi" x="730" y="30" width="120" height="52" rx="8"/>
+            <rect class="box" x="10" y="168" width="110" height="52" rx="8"/>
+            <rect class="box" x="290" y="168" width="150" height="52" rx="8"/>
+            <rect class="box-red" x="470" y="182" width="110" height="52" rx="8"/>
+            <rect class="box-hi" x="610" y="168" width="240" height="52" rx="8"/>
+          </g>
+          <g>
+            <path class="ar" d="M122 56 H146" marker-end="url(#arr)"/>
+            <path class="ar" d="M262 56 H286" marker-end="url(#arr)"/>
+            <path class="ar" d="M412 56 H436" marker-end="url(#arr)"/>
+            <path class="ar" d="M562 56 H586" marker-end="url(#arr)"/>
+            <path class="ar" d="M702 56 H726" marker-end="url(#arr)"/>
+            <path class="ar" d="M122 194 H286" marker-end="url(#arr)"/>
+            <path class="ar" d="M365 166 C 420 120, 700 130, 785 86" marker-end="url(#arr)"/>
+            <path class="ar" d="M442 205 H466" marker-end="url(#arr)"/>
+            <path class="ar" d="M442 190 C 500 150, 560 150, 606 186" marker-end="url(#arr)"/>
+          </g>
+          <text class="t-strong" x="65" y="53" text-anchor="middle">25 fontes</text>
+          <text class="t-soft" x="65" y="72" text-anchor="middle">PDF e HTML</text>
+          <text class="t-strong" x="205" y="53" text-anchor="middle">limpeza</text>
+          <text class="t-soft" x="205" y="72" text-anchor="middle">rodapés, sumários</text>
+          <text class="t-strong" x="350" y="53" text-anchor="middle">chunk-pai</text>
+          <text class="t-soft" x="350" y="72" text-anchor="middle">450 palavras</text>
+          <text class="t-strong" x="500" y="53" text-anchor="middle">segmentos</text>
+          <text class="t-soft" x="500" y="72" text-anchor="middle">até 120 palavras</text>
+          <text class="t-strong" x="645" y="53" text-anchor="middle">E5-base</text>
+          <text class="t-soft" x="645" y="72" text-anchor="middle">vira vetor</text>
+          <text class="t-strong" x="790" y="53" text-anchor="middle">ChromaDB</text>
+          <text class="t-soft" x="790" y="72" text-anchor="middle">cosseno, local</text>
+          <text class="t-soft" x="10" y="156">a cada pergunta</text>
+          <text class="t-strong" x="65" y="191" text-anchor="middle">pergunta</text>
+          <text class="t-soft" x="65" y="210" text-anchor="middle">→ vetor E5</text>
+          <text class="t-strong" x="365" y="191" text-anchor="middle">busca + reranking</text>
+          <text class="t-soft" x="365" y="210" text-anchor="middle">top 4 trechos</text>
+          <text class="t-red" x="525" y="205" text-anchor="middle">dist. &gt; 0,45</text>
+          <text class="t-soft" x="525" y="223" text-anchor="middle">abstém-se</text>
+          <text class="t-strong" x="730" y="191" text-anchor="middle">Gemma 4 12B (Ollama)</text>
+          <text class="t-soft" x="730" y="210" text-anchor="middle">JSON com a fonte de cada frase</text>
+        </svg>
+      </div>
+      <p class="note">Se nenhum trecho estiver perto o bastante, o modelo nem é chamado: a resposta é "a base não diz". É mais rápido e evita invenção.</p>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">0.3</span>Ferramentas e por que cada uma</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Ferramenta</th><th>Para quê</th><th>Por que essa</th></tr>
+          <tr><td>Python 3.11</td><td>Todo o back-end</td><td>Já estava instalado e é a versão mais estável com PyTorch, Chroma e sentence-transformers.</td></tr>
+          <tr><td>sentence-transformers</td><td>Transformar texto em vetores</td><td>Roda local e tem modelos multilíngues bons em português. Começou com MiniLM e passou para o E5-base (semana 3).</td></tr>
+          <tr><td>ChromaDB</td><td>Banco vetorial</td><td>Salva os vetores numa pasta local, sem servidor. Usa distância cosseno.</td></tr>
+          <tr><td>Ollama</td><td>Rodar o LLM</td><td>Modelo no próprio computador: sem custo por pergunta e sem mandar dados para fora. O modelo é trocado por variável de ambiente.</td></tr>
+          <tr><td>Sem LangChain</td><td>&mdash;</td><td>Esconderia justamente as partes que eu preciso explicar (chunking, busca, prompt) e traria dependências sem ganho para um protótipo.</td></tr>
+          <tr><td>Leaflet + markercluster</td><td>Mapa no navegador</td><td>Leve, gratuito e agrupa milhares de pinos sem travar.</td></tr>
+          <tr><td>pytest + GitHub Actions</td><td>Testes a cada push</td><td>Os testes rápidos usam dublês no lugar dos modelos. Os de integração ficam marcados e não rodam no CI.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="n">0.4</span>Regras que o projeto não quebra</h2>
+      <ul class="checks">
+        <li>Nunca inventar endereço, horário, preço, modalidade ou acessibilidade.</li>
+        <li>Texto dos documentos é <b>dado</b>, nunca instrução para o modelo.</li>
+        <li>Distância vetorial não é porcentagem de confiança.</li>
+        <li>"Acessível" só com vistoria em campo. Informação declarada aparece como "recurso informado".</li>
+        <li>Um resultado só vale se houver evidência de uma execução real, com data e configuração.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">0.5</span>Linha do tempo</h2>
+      <ol class="steps">
+        <li><span class="date">até 05/11</span>Fontes curadas e o esqueleto do RAG. <i>(Semana 1)</i></li>
+        <li><span class="date">10 a 13/11</span>Qualidade do RAG, curadoria do mapa e o teste com e sem RAG. <i>(Semana 2)</i></li>
+        <li><span class="date">16 e 17/11</span>Tudo num projeto só: E5, encontros, Geoportal e CI. <i>(Semana 3)</i></li>
+        <li><span class="date">próxima</span>Ver "Próximos passos" no fim da semana 3.</li>
+      </ol>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== SEMANA 1 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>Semana 1: fontes e o esqueleto do RAG</h1>
+    <div class="page-tag">Semana 1 · até 05/11</div>
+  </header>
+  <p class="lede">Primeiro escolher <b>o que</b> o assistente pode saber, depois construir o caminho do documento até o banco vetorial, uma etapa testada por vez.</p>
+
+  <div class="grid">
+
+    <section>
+      <h2><span class="n">1.1</span>Curadoria das fontes</h2>
+      <p>Antes de qualquer código: uma planilha com cada fonte, a URL, o arquivo local, as notas e as limitações.</p>
+      <ul class="dots">
+        <li><b>24 fontes</b> no catálogo da fase de dados: 15 oficiais (governo do DF) e 9 institucionais (CPB e outras entidades).</li>
+        <li>Cada uma recebe um status: só entram as <b>Aprovadas</b> ou <b>Aprovadas com ressalvas</b>.</li>
+        <li>Um script baixa de novo todas as cópias locais, para dar para refazer tudo.</li>
+      </ul>
+      <p class="why"><b>Por quê:</b> o RAG só é tão bom quanto a base. Uma fonte sem origem não entra, porque depois não há como citar.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">1.2</span>Como o código foi construído</h2>
+      <p>Comparei três jeitos de começar:</p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Jeito</th><th>Resultado</th></tr>
+          <tr><td class="green">Fatias que já funcionam</td><td>Cada etapa entrega algo que roda e tem teste. <b>Escolhido.</b></td></tr>
+          <tr><td>Criar todos os arquivos antes</td><td>Mostra a árvore final, mas cria módulos vazios e interfaces artificiais.</td></tr>
+          <tr><td>Framework pronto (LangChain)</td><td>Menos código, mas esconde o que eu preciso entender.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">1.3</span>Os commits da semana, em ordem</h2>
+      <ol class="steps">
+        <li><b>Projeto e plano</b>: o documento de desenho com objetivos, o que fica fora (login, reservas, mapa) e as regras de segurança.</li>
+        <li><b>Base executável</b>: configuração lida do <span class="mono">.env</span> e um diagnóstico que confere Python, pastas, dependências e Ollama sem alterar nada. <span class="note">6 testes</span></li>
+        <li><b>Leitura auditável</b>: extrai PDF, HTML, Markdown e texto guardando a origem, a página e a seção. PDF sem texto vira "candidato a OCR". <span class="note">16 testes</span></li>
+        <li><b>Chunking hierárquico</b>: chunks-pai e segmentos (abaixo). <span class="note">20 testes</span></li>
+        <li><b>Embeddings + Chroma</b>: vetores salvos numa coleção local. <span class="note">24 testes</span></li>
+      </ol>
+    </section>
+
+    <section>
+      <h2><span class="n">1.4</span>Por que dois tamanhos de trecho</h2>
+      <div class="diagram">
+        <svg viewBox="0 0 420 150" role="img" aria-label="Um chunk-pai de 450 palavras dividido em quatro segmentos de até 120 palavras; só os segmentos viram vetores, e a busca devolve o chunk-pai inteiro.">
+          <g filter="url(#wob)">
+            <rect class="box-hi" x="10" y="14" width="400" height="44" rx="6"/>
+            <rect class="box" x="10" y="92" width="94" height="40" rx="6"/>
+            <rect class="box" x="112" y="92" width="94" height="40" rx="6"/>
+            <rect class="box" x="214" y="92" width="94" height="40" rx="6"/>
+            <rect class="box" x="316" y="92" width="94" height="40" rx="6"/>
+          </g>
+          <text class="t-strong" x="210" y="34" text-anchor="middle">chunk-pai: ~450 palavras</text>
+          <text class="t-soft" x="210" y="51" text-anchor="middle">é o que o LLM lê e o que é citado</text>
+          <path class="ar" d="M57 60 V88" marker-end="url(#arr)"/>
+          <path class="ar" d="M159 60 V88" marker-end="url(#arr)"/>
+          <path class="ar" d="M261 60 V88" marker-end="url(#arr)"/>
+          <path class="ar" d="M363 60 V88" marker-end="url(#arr)"/>
+          <text class="t-cell" x="57" y="117" text-anchor="middle">≤ 120</text>
+          <text class="t-cell" x="159" y="117" text-anchor="middle">≤ 120</text>
+          <text class="t-cell" x="261" y="117" text-anchor="middle">≤ 120</text>
+          <text class="t-cell" x="363" y="117" text-anchor="middle">≤ 120</text>
+          <text class="t-soft" x="210" y="147" text-anchor="middle">só os segmentos viram vetores</text>
+        </svg>
+      </div>
+      <div class="alert">
+        <h3>Truncamento silencioso</h3>
+        <p>O modelo de embeddings tem janela curta. Mandar 450 palavras faria ele ler só o começo, <b>sem dar erro</b>. Por isso cada segmento tem no máximo 120 palavras, e na busca os segmentos voltam a se juntar no chunk-pai.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="n">1.5</span>Decisões pequenas que importam</h2>
+      <ul class="dots">
+        <li><b>Sobreposição de 50 palavras</b> entre chunks: uma informação na fronteira não perde o contexto.</li>
+        <li><b>Página de PDF não se mistura</b>: a citação aponta a página certa.</li>
+        <li><b>1 token ≈ 1 palavra</b>: aproximação simples e previsível, sem carregar o tokenizador.</li>
+        <li><b>IDs pelo checksum + posição</b>: rodar a ingestão de novo <span class="cmd">upsert</span> substitui, não duplica. Se o arquivo muda, os IDs mudam.</li>
+        <li><b>Modelo carregado só no primeiro uso</b>: os testes rodam sem baixar nada.</li>
+        <li><b>Modelo inicial:</b> MiniLM-L12 multilíngue, leve e bom em português.</li>
+      </ul>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== SEMANA 2 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>Semana 2: qualidade e curadoria do mapa</h1>
+    <div class="page-tag">Semana 2 · 10 a 13/11</div>
+  </header>
+  <p class="lede">O RAG ficou mais esperto para buscar e mais honesto para dizer "não sei". O mapa ganhou fontes novas, cada informação com o seu nível de confiança.</p>
+
+  <div class="grid">
+
+    <section>
+      <h2><span class="n">2.1</span>Busca melhor</h2>
+      <ul class="dots">
+        <li><b>Reranking híbrido:</b> a ordem final mistura distância vetorial, palavras da pergunta que aparecem no trecho e a região administrativa.</li>
+        <li><b>Duas janelas:</b> primeiro busca 50 segmentos por chunk pedido. Só se não achar palavra forte, olha até 200.</li>
+        <li><b>Filtros</b> por região, tipo de documento, fonte e atualidade, sem esconder trecho que não tem o metadado.</li>
+      </ul>
+      <p class="why"><b>Por quê:</b> só vetor erra nomes próprios ("COP Setor O"). As palavras ajudam, e o modo <span class="mono">--reranker</span> mede o ganho.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">2.2</span>Fonte oficial ≠ fonte atual</h2>
+      <p>Autoridade e atualidade são separadas. Cada fonte recebe um status:</p>
+      <div class="flow">
+        <span class="pill hi">atual</span><span class="to">→</span>
+        <span class="pill">em_revisao</span><span class="to">→</span>
+        <span class="pill">antiga</span>
+        <span class="pill">desconhecida</span>
+      </div>
+      <p>Horários e vagas vencem rápido; leis duram mais. Fonte antiga não é apagada, só vai para a fila de revisão.</p>
+      <p class="note">Nas 24 fontes: 5 atuais, 7 em revisão, 7 antigas, 5 sem data.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">2.3</span>Limpeza do texto</h2>
+      <p>Cada regra corrige um defeito medido na base:</p>
+      <ul class="dots">
+        <li>cabeçalhos e rodapés repetidos nas páginas do PDF;</li>
+        <li>linhas de sumário com pontilhado;</li>
+        <li>da lista nacional de clubes do CPB, ficam só os do DF;</li>
+        <li>palavras grudadas num dos PDFs dos COPs;</li>
+        <li>trechos idênticos vindos de fontes diferentes.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">2.4</span>Fora do escopo</h2>
+      <p>Commits de 10/11 para o assistente não "forçar" uma resposta:</p>
+      <ul class="dots">
+        <li>atividade que a base não cobre não cai numa resposta genérica;</li>
+        <li>nomes populares de lutas são reconhecidos;</li>
+        <li>pedidos de lugares que não são esportivos são bloqueados.</li>
+      </ul>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">2.5</span>O teste que justifica o projeto: o mesmo LLM com e sem RAG</h2>
+      <p>11/11, <span class="mono">llama3.2:3b</span>, 15 perguntas que a base responde e 5 que não responde. Respostas lidas uma a uma.</p>
+      <div class="inner2">
+        <div class="table-wrap">
+          <table>
+            <tr><th>15 respondíveis</th><th>Sem RAG</th><th>Sem RAG, cauteloso</th><th>Com RAG</th></tr>
+            <tr><td>Correta</td><td>0</td><td>0</td><td class="green"><b>9</b></td></tr>
+            <tr><td>Parcial</td><td>4</td><td>1</td><td>5</td></tr>
+            <tr><td>Não sabe</td><td>5</td><td>13</td><td>0</td></tr>
+            <tr><td>Incorreta</td><td class="red"><b>6</b></td><td>1</td><td>1</td></tr>
+          </table>
+        </div>
+        <ul class="dots">
+          <li>Sem a base, o modelo <b>inventou</b>: um "Clube de Tênis do Gama", aplicativos que não existem e um "Centro Olímpico de Brasília".</li>
+          <li>Com RAG, as 5 perguntas sem resposta viraram abstenção em <b>0,3 s</b>, sem chamar o modelo.</li>
+          <li>O preço: 13,5 s em média por resposta, contra 2 s sem RAG.</li>
+          <li>O erro com RAG (PECs do Plano Piloto) veio da <b>busca</b>, que trouxe a notícia errada.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2><span class="n">2.6</span>Novo gerador: Gemma 4 12B</h2>
+      <p>Na avaliação de 13/11 o gerador já era o <span class="mono">gemma4:12b</span>, com resposta em JSON (a fonte de cada frase) e até 3 tentativas.</p>
+      <ul class="dots">
+        <li>Recall médio dos trechos certos: <b>0,96</b>.</li>
+        <li>Pelo menos uma fonte certa citada: <b>100%</b>.</li>
+        <li>Custo: ~50 a 77 s por resposta no notebook.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">2.7</span>Curadoria do mapa: cada dado com sua confiança</h2>
+      <p>A confiança é <b>por atributo</b>, não por local: o endereço pode ser oficial e o banheiro, desconhecido.</p>
+      <div class="flow">
+        <span class="pill hi">oficial</span><span class="pill">organizacao</span><span class="pill">colaborativo</span><span class="pill">campo</span><span class="pill">divergente</span><span class="pill">desconhecido</span>
+      </div>
+      <ul class="dots">
+        <li>1.748 → <b>1.752</b> locais; erros de validação 53 → <b>0</b>.</li>
+        <li>12 parques localizados pelos polígonos oficiais do Ibram.</li>
+        <li>Novos: paradesporto (CETEFE, CPB) e 4 clubes privados confirmados no site oficial.</li>
+        <li>PECs: 403 no cadastro aberto, contra "mais de mil" segundo a Novacap. Escrevi um pedido pela LAI em vez de chutar.</li>
+      </ul>
+    </section>
+
+    <section class="full">
+      <div class="alert">
+        <h3>A lacuna que ficou à vista</h3>
+        <p>Em 8 dos 9 atributos de acessibilidade (rampa, banheiro, vaga, piso tátil…), <b>nenhum</b> dos 1.752 locais tem evidência. Não existe fonte oficial com isso. O projeto mostra "não informado" em vez de esconder, e criou um formulário de vistoria comunitária que só publica depois de moderação.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!-- ===================== SEMANA 3 ===================== -->
+<article class="sheet">
+  <header class="head">
+    <h1>Semana 3: tudo num projeto só</h1>
+    <div class="page-tag">Semana 3 · 16 e 17/11</div>
+  </header>
+  <p class="lede">O RAG, o mapa da curadoria e a agenda de encontros viraram um só projeto, com um servidor local (<span class="mono">python -m pontoativo_rag.web</span>, porta 8766), um modelo de embeddings novo e testes automáticos no GitHub.</p>
+
+  <div class="grid">
+
+    <section>
+      <h2><span class="n">3.1</span>Troca do embedding: MiniLM → E5-base</h2>
+      <ul class="dots">
+        <li>Novo modelo: <span class="mono">intfloat/multilingual-e5-base</span>.</li>
+        <li>O E5 foi treinado para busca e espera um prefixo: <span class="cmd">query:</span> na pergunta e <span class="cmd">passage:</span> nos documentos. Sem isso a busca piora.</li>
+        <li>Coleção nova no Chroma: <span class="mono">pontoativo_e5_base_v1</span>.</li>
+      </ul>
+      <p class="why"><b>Por que coleção nova:</b> vetores de modelos diferentes vivem em "espaços" diferentes e não podem ser comparados entre si.</p>
+      <p class="note">Pendência: o limiar 0,45 foi calibrado com o MiniLM e precisa ser medido de novo com o E5.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">3.2</span>Encontros e contas</h2>
+      <ul class="dots">
+        <li>Agenda compartilhada: nível (iniciante a avançado) e formato (dupla, trio ou grupo), no horário de Brasília.</li>
+        <li>A vaga é confirmada de forma <b>atômica</b>: duas pessoas clicando juntas não ficam com a mesma vaga.</li>
+        <li>Contas só de adultos (idade autodeclarada) no piloto.</li>
+        <li>Os encontros usam um catálogo de locais tirado do mapa por um script. O CI confere se os dois estão em dia.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2><span class="n">3.3</span>Moderação antes do modelo</h2>
+      <p>Uma checagem fixa (sem IA) procura termos impróprios, inclusive com acento trocado, letra repetida ou número no lugar de letra.</p>
+      <p class="why"><b>Por quê:</b> o classificador reescrevia a pergunta e jogava fora a parte imprópria ("campo de futebol e sexo" virava "campo de futebol"). A lista compara palavras inteiras para não bloquear "sexta" ou "computador".</p>
+    </section>
+
+    <section>
+      <h2><span class="n">3.4</span>Barra do mapa com modelo menor</h2>
+      <p>A barra só <b>classifica</b> a pergunta, então pode usar um modelo menor e mais rápido (<span class="mono">PONTOATIVO_OLLAMA_MODEL_MAPA</span>).</p>
+      <p>Para escolher, o <span class="mono">rotas.py</span> compara modelos pelo acerto e pelo tempo:</p>
+      <pre class="sql">python -m pontoativo_rag.rotas --modelos gemma4:12b qwen3:4b</pre>
+    </section>
+
+    <section class="full">
+      <h2><span class="n">3.5</span>Atualização pelo Geoportal do DF</h2>
+      <p>Buscar locais novos nas camadas oficiais da IDE-DF (mobiliário esportivo, parques urbanos e regiões) pela API ArcGIS, sem estragar a curadoria.</p>
+      <div class="inner2">
+        <div class="table-wrap">
+          <table>
+            <tr><th>Opção</th><th>Problema</th></tr>
+            <tr><td>Anexar tudo</td><td>Duplicaria a maior parte da base.</td></tr>
+            <tr><td>Substituir os registros da IDE-DF</td><td>Apagaria as correções manuais.</td></tr>
+            <tr><td class="green">Reconciliar por ID e distância</td><td>Inclui só o que é novo. <b>Escolhida.</b></td></tr>
+          </table>
+        </div>
+        <ul class="dots">
+          <li>Reusa os IDs oficiais (<span class="mono">ide-…</span>, <span class="mono">pqu-…</span>).</li>
+          <li>Bloqueia um local novo se houver outro da mesma categoria a até 25 m.</li>
+          <li>Gera primeiro uma base <b>candidata</b> e um relatório. Só publica com <span class="mono">--publish</span>, fazendo backup.</li>
+          <li>Nunca apaga um local que sumiu do serviço.</li>
+        </ul>
+      </div>
+      <p><span class="date">17/11</span>2.458 equipamentos baixados, 1.680 já existiam, <b>0 novos</b> e 1 duplicata bloqueada (um parque que já estava cadastrado com outro nome). A base continuou com <b>3.100</b> locais. Ou seja: a base já estava em dia.</p>
+    </section>
+
+    <section>
+      <h2><span class="n">3.6</span>Testes no GitHub Actions</h2>
+      <ul class="dots">
+        <li><b>Python:</b> pytest sem os testes de integração, que precisam de modelo.</li>
+        <li>Instala o PyTorch <b>só de CPU</b>: bem menor que o com CUDA e suficiente para os testes.</li>
+        <li><b>JavaScript:</b> confere a sintaxe dos scripts do mapa e se o catálogo dos encontros está em dia.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="next">
+        <h3>Próximos passos</h3>
+        <ul class="dots">
+          <li>Recalibrar o limiar de distância com o E5.</li>
+          <li>Repetir a avaliação completa com E5 + Gemma.</li>
+          <li>Esperar a resposta da LAI sobre os PECs.</li>
+          <li>Começar as vistorias de acessibilidade.</li>
+        </ul>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+
+<!--
+  ===================== MODELO PARA UMA NOVA SEMANA =====================
+  Copie o bloco abaixo para antes de </main>, troque N, as datas e o conteúdo,
+  e acrescente a semana na linha do tempo (seção 0.5).
+
+<article class="sheet">
+  <header class="head">
+    <h1>Semana N: título curto</h1>
+    <div class="page-tag">Semana N · dd/mm</div>
+  </header>
+  <p class="lede">Uma frase sobre o objetivo da semana.</p>
+  <div class="grid">
+    <section>
+      <h2><span class="n">N.1</span>O que mudou</h2>
+      <ul class="dots"><li>...</li></ul>
+      <p class="why"><b>Por quê:</b> ...</p>
+    </section>
+    <section>
+      <h2><span class="n">N.2</span>Resultado</h2>
+      <p>...</p>
+    </section>
+  </div>
+  <footer class="foot">
+    <span>Pedro Alvim · Notas de estudo · PontoAtivo</span>
+    <span class="sig">Pedro Alvim</span>
+  </footer>
+</article>
+-->
+
+</main>
+
+<script>
+/* destaca palavras-chave, textos e comentários nos blocos de código */
+(function () {
+  var esc = function (s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
+  var re = /(--(?=\s)[^\n]*|#[^\n]*|\/\/[^\n]*)|('[^'\n]*'|"[^"\n]*")|\b([A-Z][A-Z_]+)\b/g;
+  document.querySelectorAll("pre.sql").forEach(function (pre) {
+    var src = pre.textContent, out = "", last = 0, m;
+    re.lastIndex = 0;
+    while ((m = re.exec(src)) !== null) {
+      out += esc(src.slice(last, m.index));
+      if (m[1]) out += '<span class="c">' + esc(m[1]) + "</span>";
+      else if (m[2]) out += '<span class="s">' + esc(m[2]) + "</span>";
+      else out += '<span class="k">' + m[3] + "</span>";
+      last = m.index + m[0].length;
+    }
+    pre.innerHTML = out + esc(src.slice(last));
+  });
+})();
+</script>
+
+</html>

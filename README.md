@@ -10,11 +10,12 @@ Anotações de estudo em estilo caderno escrito à mão, feitas em HTML.
 | [banco-de-dados-sql.html](banco-de-dados-sql.html) · [PDF](banco-de-dados-sql.pdf) | Banco de Dados e SQL (MySQL 8) | 3 páginas: fundamentos, modelagem, modelos de banco (relacional, NoSQL, vetorial), tipos de dados, chaves, normalização, CRUD, JOINs, agregação, subconsultas, índices, transações e ACID, views, procedures, triggers, permissões, backup e SQL Injection |
 | [roteiro.html](roteiro.html) | Roteiro de estudo de IA | 27 vídeos gratuitos em 5 fases (Python, matemática, redes neurais, Transformers, LLMs), com checklist de progresso salvo no navegador |
 | [transformers.html](transformers.html) · [PDF](transformers.pdf) | Transformers e LLMs | 3 páginas, da [aula 1 de Stanford CME295](https://www.youtube.com/watch?v=114i2Kz-LZA): tokenização e BPE, embeddings e word2vec, RNN e LSTM, atenção (Q, K, V), multi-head, encoder-decoder, máscara causal e um exemplo completo de tradução |
+| [ponto-ativo.html](ponto-ativo.html) · [PDF](ponto-ativo.pdf) | Diário do PontoAtivo | Como o projeto PontoAtivo está sendo feito, uma folha por semana: curadoria das fontes, pipeline de RAG (chunking, E5, ChromaDB, Gemma via Ollama), teste com e sem RAG, curadoria do mapa, encontros e Geoportal, com o porquê de cada escolha. Atualizado toda semana |
 
 ## Como ver
 
-- **No navegador:** [Git e GitHub](https://pedroalvimm.github.io/notas-de-estudo/git-e-github.html) · [Banco de Dados e SQL](https://pedroalvimm.github.io/notas-de-estudo/banco-de-dados-sql.html) · [Transformers e LLMs](https://pedroalvimm.github.io/notas-de-estudo/transformers.html)
-- **Em PDF (A4, pronto para imprimir):** [git-e-github.pdf](git-e-github.pdf) · [banco-de-dados-sql.pdf](banco-de-dados-sql.pdf) · [transformers.pdf](transformers.pdf)
+- **No navegador:** [Git e GitHub](https://pedroalvimm.github.io/notas-de-estudo/git-e-github.html) · [Banco de Dados e SQL](https://pedroalvimm.github.io/notas-de-estudo/banco-de-dados-sql.html) · [Transformers e LLMs](https://pedroalvimm.github.io/notas-de-estudo/transformers.html) · [Diário do PontoAtivo](https://pedroalvimm.github.io/notas-de-estudo/ponto-ativo.html)
+- **Em PDF (A4, pronto para imprimir):** [git-e-github.pdf](git-e-github.pdf) · [banco-de-dados-sql.pdf](banco-de-dados-sql.pdf) · [transformers.pdf](transformers.pdf) · [ponto-ativo.pdf](ponto-ativo.pdf)
 - **No computador:** baixe o repositório (`git clone` ou *Code → Download ZIP*) e abra os arquivos `.html` no navegador.
 - **Modo escuro:** as páginas seguem o tema claro ou escuro do sistema.
 
